@@ -220,7 +220,9 @@ public abstract class AbstractMTA implements MTA
 			// No command found
 			{
 				logger.debug(CONST_MSG_NO_CMD);
+
 				setResponse(ReplyCode._500); // Syntax error, command unrecognized
+
 				return;
 			}
 			else if (SessionStateException.class.isInstance(e.getCause())
@@ -233,7 +235,9 @@ public abstract class AbstractMTA implements MTA
 				logger.debug(CONST_MSG_INVLD_SESS_STATE,
 								session.getStateTable().getState(),
 								e.getCommandLine());
+
 				processInvalidCommand(e.getCommandLine());
+
 				return;
 			}
 			else
@@ -247,7 +251,6 @@ public abstract class AbstractMTA implements MTA
 		{
 			logger.debug(e.getMessage());
 			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
 	} // public final void processLine(String line) throws MTAException
 

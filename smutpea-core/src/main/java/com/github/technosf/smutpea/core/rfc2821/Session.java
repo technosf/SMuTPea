@@ -53,9 +53,11 @@ public final class Session
 	private static final String CONST_MSG_PROCESS_CMD = "Processing command line:[{}]";
 	private static final String CONST_MSG_STATE_TX = "State transition proposed from:[{}] to [{}]";
 	private static final String CONST_MSG_MTA_CMD = "Sending command line:[{}] to MTA";
+	private static final String CONST_MSG_STATE_SAME = "Invalid command - leaving state as:[{}]";
 	private static final String CONST_MSG_STATE_UPDATE = "Updating state from:[{}] to [{}]";
 	private static final String CONST_MSG_RESPONSE = "Returning response:[{}]";
 	private static final String CONST_MSG_PROCESS_DATA = "Processing data line:[{}]";
+	private static final String CONST_MSG_SEND = "Requesting MTA send the email in the Buffer";
 
 	/*
 	 * Error Messages
@@ -244,7 +246,7 @@ public final class Session
 		mta.command(commandLine);
 
 		/*
-		 * Validate the return code from the MTA
+		 * Validate the <em>return code</em> from the MTA is valid for the Command
 		 */
 		if (!commandLine
 						.getCommand()
@@ -256,17 +258,26 @@ public final class Session
 			throw new MTAException(ERR_INVALID_REPLY, commandLine);
 		}
 
-		try
-		/*
-		 * Update the state table
-		 */
+		if (!commandLine.isValid())
+		// Command was not valid, do not update the state
 		{
-			logger.debug(CONST_MSG_STATE_UPDATE, stateTable.getState(), nextState);
-			stateTable.updateState(nextState);
+			logger.debug(CONST_MSG_STATE_SAME, stateTable.getState());
 		}
-		catch (SessionStateException e)
+		else
+		// Command was valid, update the state
 		{
-			throw new MTAException(ERR_STATE_UPDATE, commandLine);
+			try
+			/*
+			 * Update the state table
+			 */
+			{
+				logger.debug(CONST_MSG_STATE_UPDATE, stateTable.getState(), nextState);
+				stateTable.updateState(nextState);
+			}
+			catch (SessionStateException e)
+			{
+				throw new MTAException(ERR_STATE_UPDATE, commandLine);
+			}
 		}
 
 
@@ -308,12 +319,14 @@ public final class Session
 		/*
 		 * The end of the mail body was signaled. Ask the MTA to <em>send</em> and return the MTA's reply.
 		 */
+		logger.debug(CONST_MSG_SEND);
 		mta.send();
 
 		try
 		// Update State from DATA to COMMAND
 		{
 			stateTable.updateState(SessionState.COMMAND);
+			logger.debug(CONST_MSG_STATE_UPDATE, stateTable.getState(), SessionState.COMMAND);
 		}
 		catch (SessionStateException e)
 		{
