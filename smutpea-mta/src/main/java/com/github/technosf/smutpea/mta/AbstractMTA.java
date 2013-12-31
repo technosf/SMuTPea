@@ -15,6 +15,9 @@ package com.github.technosf.smutpea.mta;
 
 import java.util.Date;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.github.technosf.smutpea.core.MTA;
 import com.github.technosf.smutpea.core.exceptions.MTAException;
 import com.github.technosf.smutpea.core.exceptions.SessionStateException;
@@ -40,11 +43,20 @@ import com.github.technosf.smutpea.core.rfc2821.SessionState;
  */
 public abstract class AbstractMTA implements MTA
 {
+	private static final Logger logger = LoggerFactory.getLogger(AbstractMTA.class);
+
+	/*
+	 * Constants
+	 */
+	private static final String CONST_MSG_PROCESS = "Processing line:[{}]";
+	private static final String CONST_MSG_NO_CMD = "No command found";
+	private static final String CONST_MSG_INVLD_SESS_STATE = "Invalid session state:[{}] for command:[{}s]";
+	private static final String CONST_MSG_UNKNOWN_ERR = "Propagating unknown error:[{}]";
 
 	/**
-	 * 
+	 * Command response format - code, message, extra
 	 */
-	private static final String CONST_FMT_RESPONSE = "%1$s %2$s %3$s";
+	private static final String CONST_FMT_CMD_RESPONSE = "%1$s %2$s %3$s";
 
 	/**
 	 * The MTA name
@@ -63,8 +75,8 @@ public abstract class AbstractMTA implements MTA
 	protected final Session session;
 
 	/**
-     * 
-     */
+	 * The current/last response
+	 */
 	private String response;
 
 
@@ -160,7 +172,7 @@ public abstract class AbstractMTA implements MTA
 	protected final void setResponse(ReplyCode code)
 	{
 		this.response =
-						String.format(CONST_FMT_RESPONSE, code.getCode(),
+						String.format(CONST_FMT_CMD_RESPONSE, code.getCode(),
 										code.getDescription(), "");
 	}
 
@@ -181,7 +193,7 @@ public abstract class AbstractMTA implements MTA
 	@Override
 	public final void connect()
 	{
-		setResponse(String.format(CONST_FMT_RESPONSE, ReplyCode._220.getCode(),
+		setResponse(String.format(CONST_FMT_CMD_RESPONSE, ReplyCode._220.getCode(),
 						getMTADomain(), getMTAName(), getMTADateTime()));
 	}
 
@@ -195,6 +207,8 @@ public abstract class AbstractMTA implements MTA
 	@Override
 	public final void processLine(String line) throws MTAException
 	{
+		logger.debug(CONST_MSG_PROCESS, line);
+
 		try
 		{
 			setResponse(session.process(line));
@@ -205,6 +219,7 @@ public abstract class AbstractMTA implements MTA
 			if (e.getCommandLine() == null)
 			// No command found
 			{
+				logger.debug(CONST_MSG_NO_CMD);
 				setResponse(ReplyCode._500); // Syntax error, command unrecognized
 				return;
 			}
@@ -215,17 +230,22 @@ public abstract class AbstractMTA implements MTA
 			 * the response
 			 */
 			{
+				logger.debug(CONST_MSG_INVLD_SESS_STATE,
+								session.getStateTable().getState(),
+								e.getCommandLine());
 				processInvalidCommand(e.getCommandLine());
 				return;
 			}
 			else
-			// Not a well defined MTA exception, so propogate it up
+			// Not a well defined MTA exception, so propagate it up
 			{
+				logger.debug(CONST_MSG_UNKNOWN_ERR, e.getMessage());
 				throw e;
 			}
 		}
 		catch (SmtpLineException e)
 		{
+			logger.debug(e.getMessage());
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

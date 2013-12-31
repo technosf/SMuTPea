@@ -11,72 +11,49 @@
  * specific language governing permissions and limitations under the License.
  */
 
-package com.github.technosf.smutpea.server;
+package com.github.technosf.smutpea.server.example;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.github.technosf.smutpea.core.MTA;
 import com.github.technosf.smutpea.core.exceptions.MTAException;
-import com.github.technosf.smutpea.mta.SinkMTA;
+import com.github.technosf.smutpea.mta.impl.SinkMTA;
+import com.github.technosf.smutpea.server.AbstractCLIServer;
 
 /**
+ * CLISinkServer
+ * <p>
+ * A CLI based MTA that dumps all email
+ * 
  * @author technosf
  * @since 0.0.1
  * @version 0.0.1
  */
-public class CLISinkServer
+public class CLISinkServer extends AbstractCLIServer
 {
+	private static final Logger logger = LoggerFactory.getLogger(CLISinkServer.class);
 
-	static InputStreamReader istream = new InputStreamReader(System.in);
-
-	static BufferedReader bufRead = new BufferedReader(istream);
-
-	static MTA mta;
+	/*
+	 * Constants
+	 */
+	private static final String CONST_ERR_MTA_ERR = "MTA cannot be instantiated";
 
 
 	public static void main(String[] args)
 	{
+		MTA mta = null;
+
 		try
 		{
 			mta = new SinkMTA("local.cli.server");
-			mta.connect();
-			System.out.println(mta.getResponse());
 		}
 		catch (MTAException e)
 		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.debug(CONST_ERR_MTA_ERR, e);
 		}
 
-		String line = null;
+		serve(mta);
 
-		while (!mta.isClosed())
-		{
-			try
-			{
-				line = bufRead.readLine();
-			}
-			catch (IOException e)
-			{
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-
-			try
-			{
-				mta.processLine(line);
-			}
-			catch (MTAException e)
-			{
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-
-			System.out.println(mta.getResponse());
-
-		}
-
-	}
+	} // public static void main(String[] args)
 }

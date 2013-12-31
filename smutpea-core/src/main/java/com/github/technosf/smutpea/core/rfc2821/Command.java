@@ -19,6 +19,9 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * SMTP Commands, syntax and valid reply code definition
  * <p>
@@ -36,90 +39,113 @@ public enum Command
 		//
 		EHLO("EHLO SP Domain", "EHLO (\\S*)$", new ReplyCode[]
 			{
-					ReplyCode._250, ReplyCode._421, ReplyCode._500, ReplyCode._501,
-					ReplyCode._502, ReplyCode._503, ReplyCode._504, ReplyCode._550 }),
+							ReplyCode._250, ReplyCode._421, ReplyCode._500, ReplyCode._501,
+							ReplyCode._502, ReplyCode._503, ReplyCode._504, ReplyCode._550
+		}),
 
 		//
 		HELO("HELO SP Domain", "HELO (\\S*)$", new ReplyCode[]
 			{
-					ReplyCode._250, ReplyCode._421, ReplyCode._500, ReplyCode._501,
-					ReplyCode._502, ReplyCode._503, ReplyCode._504 }),
+							ReplyCode._250, ReplyCode._421, ReplyCode._500, ReplyCode._501,
+							ReplyCode._502, ReplyCode._503, ReplyCode._504
+		}),
 
 		//
 		MAIL("MAIL FROM:<reverse-path> [SP <mail-parameters> ]",
-				"MAIL FROM:<(\\S*)>(?: <(\\S*)>)?$",
-				new ReplyCode[]
-					{
-							ReplyCode._250, ReplyCode._421, ReplyCode._451,
-							ReplyCode._452,
-							ReplyCode._503, ReplyCode._550,
-							ReplyCode._552, ReplyCode._553 }),
+						"MAIL FROM:<(\\S*)>(?: <(\\S*)>)?$",
+						new ReplyCode[]
+							{
+											ReplyCode._250, ReplyCode._421, ReplyCode._451,
+											ReplyCode._452,
+											ReplyCode._503, ReplyCode._550,
+											ReplyCode._552, ReplyCode._553
+						}),
 
 		//
 		RCPT("RCPT TO:<forward-path> [SP <rcpt-parameters> ]",
-				"RCPT TO:<(\\S*)>(?: <(\\S*)>)?$", new ReplyCode[]
-					{
-							ReplyCode._250, ReplyCode._251, ReplyCode._421,
-							ReplyCode._450,
-							ReplyCode._451, ReplyCode._452,
-							ReplyCode._503, ReplyCode._550, ReplyCode._552,
-							ReplyCode._553 }),
+						"RCPT TO:<(\\S*)>(?: <(\\S*)>)?$", new ReplyCode[]
+							{
+											ReplyCode._250, ReplyCode._251, ReplyCode._421,
+											ReplyCode._450,
+											ReplyCode._451, ReplyCode._452,
+											ReplyCode._503, ReplyCode._550, ReplyCode._552,
+											ReplyCode._553
+						}),
 
 		//
 		DATA("DATA", "DATA$", new ReplyCode[]
 			{
-					ReplyCode._354, ReplyCode._421, ReplyCode._451, ReplyCode._452,
-					ReplyCode._501, ReplyCode._503, ReplyCode._552,
-					ReplyCode._554 }),
+							ReplyCode._354, ReplyCode._421, ReplyCode._451, ReplyCode._452,
+							ReplyCode._501, ReplyCode._503, ReplyCode._552,
+							ReplyCode._554
+		}),
 
 		//
 		RSET("RSET", "RSET$", new ReplyCode[]
-			{ ReplyCode._250, ReplyCode._421, ReplyCode._501 }),
+			{
+							ReplyCode._250, ReplyCode._421, ReplyCode._501
+		}),
 
 		//
 		VRFY("VRFY SP String", "VRFY (\\S*)$", new ReplyCode[]
 			{
-					ReplyCode._250, ReplyCode._421, ReplyCode._502, ReplyCode._504,
-					ReplyCode._550, ReplyCode._551,
-					ReplyCode._553 }),
+							ReplyCode._250, ReplyCode._421, ReplyCode._502, ReplyCode._504,
+							ReplyCode._550, ReplyCode._551,
+							ReplyCode._553
+		}),
 
 		//
 		EXPN("EXPN SP String", "EXPN (\\S*)$", new ReplyCode[]
 			{
-					ReplyCode._250, ReplyCode._252, ReplyCode._421, ReplyCode._500,
-					ReplyCode._502, ReplyCode._503,
-					ReplyCode._504, ReplyCode._550 }),
+							ReplyCode._250, ReplyCode._252, ReplyCode._421, ReplyCode._500,
+							ReplyCode._502, ReplyCode._503,
+							ReplyCode._504, ReplyCode._550
+		}),
 
 		//
 		HELP("HELP [SP String]", "HELP(?: (\\S*))?$", new ReplyCode[]
 			{
-					ReplyCode._211, ReplyCode._214, ReplyCode._502,
-					ReplyCode._503, ReplyCode._504 }),
+							ReplyCode._211, ReplyCode._214, ReplyCode._502,
+							ReplyCode._503, ReplyCode._504
+		}),
 
 		//
 		NOOP("NOOP [SP String]", "NOOP(?: (\\S*))?$", new ReplyCode[]
-			{ ReplyCode._250, ReplyCode._421, ReplyCode._503 }),
+			{
+							ReplyCode._250, ReplyCode._421, ReplyCode._503
+		}),
 
 		//
 		QUIT("Quit", "QUIT$", new ReplyCode[]
-			{ ReplyCode._221, ReplyCode._421, ReplyCode._501, ReplyCode._503 }
+			{
+							ReplyCode._221, ReplyCode._421, ReplyCode._501, ReplyCode._503
+		}
 		);
 
+		private static final Logger logger = LoggerFactory.getLogger(Command.class);
+
+		/*
+		 * Constants
+		 */
+		private static final String CONST_MSG_EMPTY_CMD = "Command is empty. Returning null command line.";
+		private static final String CONST_MSG_CMD_NOT_FOUND = "Command:[{}] was not found or didn't parse. Returning null command line.";
+		private static final String CONST_MSG_CMD_FOUND = "Command line:[{}] parsed and found. Returning valid command line.";
+		private static final String CONST_MSG_CMD_PARSE = "Command line:[{}] didn't parse. Returning invalid command line.";
 
 		/**
 		 * Command description
 		 */
-		private final String	description;
+		private final String description;
 
 		/**
 		 * Command validation pattern
 		 */
-		private final Pattern	pattern;
+		private final Pattern pattern;
 
 		/**
 		 * Command valid responses
 		 */
-		final List<ReplyCode>	validReplyCodes;
+		final List<ReplyCode> validReplyCodes;
 
 		/**
 		 * Data structure for a Command and it's parameters
@@ -129,17 +155,17 @@ public enum Command
 			/**
 			 * The {@code Command}
 			 */
-			Command		command;
+			Command command;
 
 			/**
 			 * Command validity
 			 */
-			boolean		valid;
+			boolean valid;
 
 			/**
 			 * Command parameters
 			 */
-			String[]	parameters;
+			String[] parameters;
 
 
 			/**
@@ -204,16 +230,16 @@ public enum Command
 				if (command != null)
 				{
 					result.append(command)
-							.append("|")
-							.append(valid)
-							.append("|");
+									.append("|")
+									.append(valid)
+									.append("|");
 
 					if (parameters != null)
 					{
 						for (String parameter : parameters)
 						{
 							result.append(" - ")
-									.append(parameter);
+											.append(parameter);
 						}
 					}
 				}
@@ -232,7 +258,7 @@ public enum Command
 		 *            Regex rule for the command
 		 */
 		Command(String description, String validationRegex,
-				ReplyCode[] validResponseCodes)
+						ReplyCode[] validResponseCodes)
 		{
 			this.description = description;
 			pattern = Pattern.compile(validationRegex, Pattern.CASE_INSENSITIVE);
@@ -252,6 +278,7 @@ public enum Command
 			if (line == null || "".equals(line.trim()))
 			// Check for empty strings
 			{
+				logger.debug(CONST_MSG_EMPTY_CMD);
 				return new CommandLine(null, false, null);
 			}
 
@@ -275,6 +302,7 @@ public enum Command
 			// The command was not found or didn't parse out correctly, so return
 			// null as a valid command wasn't found.
 			{
+				logger.debug(CONST_MSG_CMD_NOT_FOUND, commandPart);
 				return new CommandLine(null, false, null);
 			}
 
@@ -285,11 +313,13 @@ public enum Command
 				List<String> parameters = new ArrayList<String>();
 
 				Matcher matcher =
-						command.pattern.matcher(cleanLine);
+								command.pattern.matcher(cleanLine);
 
 				if (matcher.matches())
 				// The input line parses to the command definition, and is valid.
 				{
+					logger.debug(CONST_MSG_CMD_FOUND, cleanLine);
+
 					validity = true;
 
 					for (int groupNumber = 1; groupNumber <= matcher.groupCount(); groupNumber++)
@@ -305,10 +335,14 @@ public enum Command
 					} // for (int groupNumber = 1; groupNumber <= matcher.groupCount(); groupNumber++)
 
 				} // if (matcher.matches())
+				else
+				{
+					logger.debug(CONST_MSG_CMD_PARSE, cleanLine);
+				}
 
 				commandLine =
-						new CommandLine(command, validity,
-								parameters.toArray(new String[] {}));
+								new CommandLine(command, validity,
+												parameters.toArray(new String[] {}));
 
 			} // if (command != null)
 

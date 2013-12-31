@@ -16,6 +16,9 @@ package com.github.technosf.smutpea.core.rfc2821;
 import static com.github.technosf.smutpea.core.rfc2821.Command.parseLine;
 import static java.util.Objects.requireNonNull;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.github.technosf.smutpea.core.MTA;
 import com.github.technosf.smutpea.core.exceptions.MTAException;
 import com.github.technosf.smutpea.core.exceptions.SessionClosedException;
@@ -37,10 +40,22 @@ import com.github.technosf.smutpea.core.rfc2821.Command.CommandLine;
  */
 public final class Session
 {
+	private static final Logger logger = LoggerFactory.getLogger(Session.class);
+
 	/**
 	 * The SMTP end-of-line signifier, CRLF
 	 */
 	public final static String CRLF = "\r\n";
+
+	/*
+	 * Constants
+	 */
+	private static final String CONST_MSG_PROCESS_CMD = "Processing command line:[{}]";
+	private static final String CONST_MSG_STATE_TX = "State transition proposed from:[{}] to [{}]";
+	private static final String CONST_MSG_MTA_CMD = "Sending command line:[{}] to MTA";
+	private static final String CONST_MSG_STATE_UPDATE = "Updating state from:[{}] to [{}]";
+	private static final String CONST_MSG_RESPONSE = "Returning response:[{}]";
+	private static final String CONST_MSG_PROCESS_DATA = "Processing data line:[{}]";
 
 	/*
 	 * Error Messages
@@ -191,6 +206,8 @@ public final class Session
 	private final String commandStateProcessor(final String line)
 					throws MTAException
 	{
+		logger.debug(CONST_MSG_PROCESS_CMD, line);
+
 		CommandLine commandLine = parseLine(line);  // Parse out the command
 
 		SessionState nextState = null;
@@ -201,6 +218,8 @@ public final class Session
 			nextState =
 							StateMachine.nextState(stateTable.getState(),
 											requireNonNull(commandLine).getCommand());
+
+			logger.debug(CONST_MSG_STATE_TX, stateTable.getState(), nextState);
 		}
 		catch (NullPointerException e)
 		// No command found
@@ -221,6 +240,7 @@ public final class Session
 		/*
 		 * Process the command in the MTA
 		 */
+		logger.debug(CONST_MSG_MTA_CMD, commandLine);
 		mta.command(commandLine);
 
 		/*
@@ -241,6 +261,7 @@ public final class Session
 		 * Update the state table
 		 */
 		{
+			logger.debug(CONST_MSG_STATE_UPDATE, stateTable.getState(), nextState);
 			stateTable.updateState(nextState);
 		}
 		catch (SessionStateException e)
@@ -248,7 +269,12 @@ public final class Session
 			throw new MTAException(ERR_STATE_UPDATE, commandLine);
 		}
 
-		return mta.getResponse();
+
+		String response = mta.getResponse();
+
+		logger.debug(CONST_MSG_RESPONSE, response);
+
+		return response;
 	}
 
 
@@ -268,6 +294,8 @@ public final class Session
 	private final String dataStateProcessor(final String line)
 					throws MTAException
 	{
+		logger.debug(CONST_MSG_PROCESS_DATA, line);
+
 		if (!".".equals(line))
 		/*
 		 * The end of the mail body was not signaled. Input is a line of mail body to append for processing

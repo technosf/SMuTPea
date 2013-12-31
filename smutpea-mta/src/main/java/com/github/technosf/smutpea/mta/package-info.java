@@ -12,7 +12,7 @@
  */
 
 /**
- * MTA implementations
+ * MTA code and helpers
  * 
  * @author technosf
  * @since 0.0.1

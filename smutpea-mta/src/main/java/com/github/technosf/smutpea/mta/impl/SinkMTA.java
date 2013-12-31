@@ -11,12 +11,16 @@
  * specific language governing permissions and limitations under the License.
  */
 
-package com.github.technosf.smutpea.mta;
+package com.github.technosf.smutpea.mta.impl;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.github.technosf.smutpea.core.MTA;
 import com.github.technosf.smutpea.core.exceptions.MTAException;
 import com.github.technosf.smutpea.core.rfc2821.Command.CommandLine;
 import com.github.technosf.smutpea.core.rfc2821.ReplyCode;
+import com.github.technosf.smutpea.mta.AbstractMTA;
 
 
 /**
@@ -33,6 +37,14 @@ public final class SinkMTA
 				extends AbstractMTA
 				implements MTA
 {
+	private static final Logger logger = LoggerFactory.getLogger(SinkMTA.class);
+
+	/*
+	 * Constants
+	 */
+	private static final String CONST_MSG_VALID_PROCESSED = "Valid command processed:[{}] giving code:[{}]";
+	private static final String CONST_MSG_INVALID_PROCESSED = "Invalid command processed:[{}] giving code:[{}]";
+	private static final String CONST_MSG_SENT = "Mail sent to /dev/null with code:[{}]";
 
 	/**
      * 
@@ -98,6 +110,8 @@ public final class SinkMTA
 					break;
 			}
 
+			logger.debug(CONST_MSG_VALID_PROCESSED, commandLine.getCommand(), replyCode);
+
 			setResponse(replyCode);
 		}
 	}
@@ -142,10 +156,11 @@ public final class SinkMTA
 				}
 			}
 
+			logger.debug(CONST_MSG_INVALID_PROCESSED, commandLine.getCommand(), replyCode);
+
 			setResponse(replyCode);
 		}
 	}
-
 
 	/**
 	 * {@inheritDoc}
@@ -158,13 +173,12 @@ public final class SinkMTA
 		synchronized (mta)
 		{
 			// Do nothing.
-			System.out.println("Ate a message.");
 			replyCode = ReplyCode._250;
-			setResponse(String.format("%1$s %2$s", getReplyCode().getCode(),
+			setResponse(String.format("%1$s %2$s", getReplyCode().getCode(),  // TODO validate
 							"Mail sent to /dev/null"));
+			logger.info(CONST_MSG_SENT, getReplyCode().getCode());
 		}
 	}
-
 
 	/**
 	 * {@inheritDoc}
@@ -179,4 +193,5 @@ public final class SinkMTA
 			return replyCode;
 		}
 	}
+
 }
