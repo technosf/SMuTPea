@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 technosf [https://github.com/technosf]
+ * + * Copyright 2013 technosf [https://github.com/technosf]
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -17,7 +17,10 @@ import static java.util.Objects.requireNonNull;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.PrintStream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,21 +29,17 @@ import com.github.technosf.smutpea.core.MTA;
 import com.github.technosf.smutpea.core.exceptions.MTAException;
 
 /**
- * AbstractCLIServer
+ * AbstractServer
  * <p>
- * Basic CLI server that will place an MTA on the Command Line for one transmission cycle.
+ * Basic server that will place an MTA on the given input/output stream for one transmission cycle.
  * 
  * @author technosf
  * @since 0.0.1
  * @version 0.0.1
  */
-public abstract class AbstractCLIServer
+public abstract class AbstractServer
 {
-	private static final Logger logger = LoggerFactory.getLogger(AbstractCLIServer.class);
-
-	private static final InputStreamReader istream = new InputStreamReader(System.in);
-
-	private static final BufferedReader bufRead = new BufferedReader(istream);
+	private static final Logger logger = LoggerFactory.getLogger(AbstractServer.class);
 
 	/*
 	 * Constants
@@ -50,21 +49,48 @@ public abstract class AbstractCLIServer
 	private static final String CONST_ERR_MTA_PROCESSING = "MTA error processing input line";
 
 
+	private final BufferedReader input;
+	private final PrintStream output;
+
 	/**
-	 * Serve the MTA up on the Command Line Interface
+	 * Constructor setting the {@code MTA} and input/output
 	 * 
-	 * @param mta
-	 *            the MTA to serve
+	 * @param in
+	 * @param out
 	 */
-	public static void serve(final MTA mta)
+	protected AbstractServer(final InputStream in, final OutputStream out)
 	{
+		this.input = new BufferedReader(new InputStreamReader(in));
+		this.output = new PrintStream(out);
+	}
+
+	/**
+	 * Provides an MTA for this instance
+	 * 
+	 * @return the MTA
+	 */
+	protected abstract MTA getMTA();
+
+	/**
+	 * Clean up on MTA close.
+	 */
+	protected abstract void close();
+
+	/**
+	 * Serve the MTA up on the Input and Output streams
+	 * 
+	 */
+	public void open()
+	{
+		MTA mta = getMTA();
+
 		try
 		{
 			/*
-			 * Test the MTA, connect to it and present the initial reponse
+			 * Test the MTA, connect to it and present the initial response
 			 */
 			requireNonNull(mta).connect();
-			System.out.println(mta.getResponse());
+			output.println(mta.getResponse());
 		}
 		catch (NullPointerException e)
 		// MTA was null
@@ -79,7 +105,7 @@ public abstract class AbstractCLIServer
 			try
 			// Read a line of input
 			{
-				line = bufRead.readLine();
+				line = input.readLine();
 			}
 			catch (IOException e)
 			{
@@ -97,8 +123,11 @@ public abstract class AbstractCLIServer
 			}
 
 			// Print out the response
-			System.out.println(mta.getResponse());
+			output.println(mta.getResponse());
 
 		} // while (!mta.isClosed())
-	} // public static void serve(MTA mta)
+
+		close();
+
+	} // public void serve(MTA mta)
 }

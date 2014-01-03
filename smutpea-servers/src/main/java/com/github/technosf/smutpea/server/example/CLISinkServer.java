@@ -19,41 +19,89 @@ import org.slf4j.LoggerFactory;
 import com.github.technosf.smutpea.core.MTA;
 import com.github.technosf.smutpea.core.exceptions.MTAException;
 import com.github.technosf.smutpea.mta.impl.SinkMTA;
-import com.github.technosf.smutpea.server.AbstractCLIServer;
+import com.github.technosf.smutpea.server.AbstractServer;
 
 /**
  * CLISinkServer
  * <p>
- * A CLI based MTA that dumps all email
+ * A command line interface server based MTA that dumps all email
  * 
  * @author technosf
  * @since 0.0.1
  * @version 0.0.1
  */
-public class CLISinkServer extends AbstractCLIServer
+public class CLISinkServer extends AbstractServer
 {
+
 	private static final Logger logger = LoggerFactory.getLogger(CLISinkServer.class);
 
 	/*
 	 * Constants
 	 */
+	private static final String CONST_MSG_MTA_OPEN = "MTA connection opened.";
+	private static final String CONST_MSG_MTA_CLOSE = "MTA connection closed";
 	private static final String CONST_ERR_MTA_ERR = "MTA cannot be instantiated";
 
+	/**
+	 * The MTA for this instance
+	 */
+	private final MTA mta;
 
+	/**
+	 * Run a CLI SinkMTA
+	 * 
+	 */
 	public static void main(String[] args)
 	{
-		MTA mta = null;
+		CLISinkServer server = null;
 
 		try
 		{
-			mta = new SinkMTA("local.cli.server");
+			server = new CLISinkServer();
+			logger.info(CONST_MSG_MTA_OPEN);
+			server.open();
 		}
 		catch (MTAException e)
 		{
 			logger.debug(CONST_ERR_MTA_ERR, e);
 		}
 
-		serve(mta);
-
 	} // public static void main(String[] args)
+
+
+	/**
+	 * Constructor placing a {@code SinkMTA} on the standard command line
+	 * 
+	 * @throws MTAException
+	 *             the {@code SinkMTA} could not be created.
+	 */
+	CLISinkServer() throws MTAException
+	{
+		super(System.in, System.out);
+		mta = new SinkMTA("local.cli.server");
+	}
+
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.github.technosf.smutpea.server.AbstractServer#close()
+	 */
+	@Override
+	protected void close()
+	{
+		logger.info(CONST_MSG_MTA_CLOSE);
+	}
+
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.github.technosf.smutpea.server.AbstractServer#newMTA()
+	 */
+	@Override
+	protected MTA getMTA()
+	{
+		return mta;
+	}
 }

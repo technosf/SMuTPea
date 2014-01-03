@@ -18,7 +18,27 @@
 		</license>
 	</licenses>
 
-
+<!-- 	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				<version>1.2.1</version>
+				<executions>
+					<execution>
+                        <id>CLISink</id>
+						<goals>
+							<goal>java</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<mainClass>com.github.technosf.smutpea.server.example.CLISinkServer</mainClass>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build> -->
+	
 	<dependencies>
 		<dependency>
 			<groupId>com.github.technosf.smutpea</groupId>

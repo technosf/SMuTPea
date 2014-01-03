@@ -55,9 +55,7 @@ Licensed under Apache 2.0</description>
 				</configuration>
 			</plugin>
 		</plugins>
-
 	</build>
-
 
 	<dependencies>
 		<dependency>
