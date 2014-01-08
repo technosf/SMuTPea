@@ -32,9 +32,9 @@ import com.github.technosf.smutpea.mta.impl.SinkMTA;
 import com.github.technosf.smutpea.server.AbstractSocketServer;
 
 /**
- * CLISinkServer
+ * SocketSinkServer
  * <p>
- * A command line interface server based MTA that dumps all email
+ * A socket server based MTA that dumps all email
  * 
  * @author technosf
  * @since 0.0.1
@@ -65,38 +65,6 @@ public final class SocketSinkServer
 	private static Set<Integer> ports = new HashSet<Integer>();
 	private static Map<Integer, Runnable> servers = new HashMap<Integer, Runnable>();
 
-	/**
-	 * @param port
-	 * @return
-	 */
-	private static Runnable createServer(final int port)
-	{
-		Runnable serverTask = new Runnable()
-			{
-				@Override
-				public void run()
-				{
-					logger.info(CONST_MSG_SERVER_START, port);
-					try
-					{
-						ServerSocket serverSocket = new ServerSocket(port);
-						while (true)
-						{
-							Socket clientSocket = serverSocket.accept();
-							executorService.submit(new SocketSinkServer(clientSocket));
-						}
-						// serverSocket.close();
-					}
-					catch (IOException e)
-					{
-						logger.error(CONST_ERR_SERVER_REQ, e);
-					}
-				}
-			};
-		Thread serverThread = new Thread(serverTask);
-		serverThread.start();
-		return serverTask;
-	}
 
 	/**
 	 * Run Socket-connected SinkMTA's
@@ -127,16 +95,56 @@ public final class SocketSinkServer
 
 		for (int port : ports)
 		{
-			servers.put(port, createServer(port));
+			servers.put(port, createConnectionListener(port));
 		}
 
 		logger.info(CONST_MSG_MAIN_END);
 
 	} // public static void main(String[] args)
 
+	/**
+	 * Creates a connection listening service on a given port, spawning MTA servers as needed.
+	 * 
+	 * @param port
+	 *            the port to listen on
+	 * @return the runnable that will handle each incoming connection
+	 */
+	private static Runnable createConnectionListener(final int port)
+	{
+		Runnable serverTask = new Runnable()
+			{
+				@Override
+				public void run()
+				{
+					logger.info(CONST_MSG_SERVER_START, port);
+
+					try (ServerSocket serverSocket = new ServerSocket(port))
+					{
+						while (true)
+						{
+							Socket clientSocket = serverSocket.accept();
+							executorService.submit(new SocketSinkServer(clientSocket));
+						}
+
+					}
+					catch (IOException e)
+					{
+						logger.error(CONST_ERR_SERVER_REQ, e);
+					}
+				}
+			};
+
+		Thread serverThread = new Thread(serverTask);
+		serverThread.start();
+		return serverTask;
+	}
+
 
 	/**
+	 * Constructor creating a Sink MTA server for the given socket.
+	 * 
 	 * @param socket
+	 *            the socket
 	 * @throws IOException
 	 */
 	public SocketSinkServer(Socket socket) throws IOException
@@ -185,6 +193,7 @@ public final class SocketSinkServer
 	@Override
 	public void run()
 	{
-		open();
+		open();  // Open the connection
 	}
+
 }

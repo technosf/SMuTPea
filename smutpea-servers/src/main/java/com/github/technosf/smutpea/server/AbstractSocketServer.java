@@ -58,13 +58,16 @@ public abstract class AbstractSocketServer extends AbstractServer
 	@Override
 	protected void close()
 	{
-		try
+		if (!socket.isClosed())
 		{
-			socket.close();
-		}
-		catch (IOException e)
-		{
-			logger.error(CONST_ERR_SOCKET_CLOSE, e);
+			try
+			{
+				socket.close();
+			}
+			catch (IOException e)
+			{
+				logger.error(CONST_ERR_SOCKET_CLOSE, e);
+			}
 		}
 	}
 

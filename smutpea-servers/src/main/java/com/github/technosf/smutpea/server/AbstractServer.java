@@ -44,7 +44,8 @@ public abstract class AbstractServer
 	/*
 	 * Constants
 	 */
-	private static final String CONST_MSG_CLIENT_INPUT = "Input from Client:[{}]";
+	private static final String CONST_MSG_CLIENT_DIALOGUE = "Dialogue from Client:[{}]";
+	private static final String CONST_MSG_MTA_DIALOGUE = "Dialogue from MTA:[{}]";
 	private static final String CONST_ERR_MTA_NULL = "MTA cannot be null";
 	private static final String CONST_ERR_IO_READ = "IO Error reading input line";
 	private static final String CONST_ERR_MTA_PROCESSING = "MTA error processing input line";
@@ -92,6 +93,7 @@ public abstract class AbstractServer
 			 */
 			requireNonNull(mta).connect();
 			output.println(mta.getResponse());
+			logger.info(CONST_MSG_MTA_DIALOGUE, mta.getResponse());
 		}
 		catch (NullPointerException e)
 		// MTA was null
@@ -107,7 +109,7 @@ public abstract class AbstractServer
 			// Read a line of input
 			{
 				line = input.readLine();
-				logger.info(CONST_MSG_CLIENT_INPUT, line);
+				logger.info(CONST_MSG_CLIENT_DIALOGUE, line);
 			}
 			catch (IOException e)
 			{
@@ -123,11 +125,11 @@ public abstract class AbstractServer
 			catch (MTAException e)
 			{
 				logger.error(CONST_ERR_MTA_PROCESSING, e);
-				break;
 			}
 
 			// Print out the response
 			output.println(mta.getResponse());
+			logger.info(CONST_MSG_MTA_DIALOGUE, mta.getResponse());
 
 		} // while (!mta.isClosed())
 
