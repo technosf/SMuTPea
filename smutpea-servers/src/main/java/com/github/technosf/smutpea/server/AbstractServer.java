@@ -1,5 +1,5 @@
 /*
- * + * Copyright 2013 technosf [https://github.com/technosf]
+ * Copyright 2013 technosf [https://github.com/technosf]
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -44,6 +44,7 @@ public abstract class AbstractServer
 	/*
 	 * Constants
 	 */
+	private static final String CONST_MSG_CLIENT_INPUT = "Input from Client:[{}]";
 	private static final String CONST_ERR_MTA_NULL = "MTA cannot be null";
 	private static final String CONST_ERR_IO_READ = "IO Error reading input line";
 	private static final String CONST_ERR_MTA_PROCESSING = "MTA error processing input line";
@@ -106,10 +107,12 @@ public abstract class AbstractServer
 			// Read a line of input
 			{
 				line = input.readLine();
+				logger.info(CONST_MSG_CLIENT_INPUT, line);
 			}
 			catch (IOException e)
 			{
 				logger.error(CONST_ERR_IO_READ, e);
+				break;
 			}
 
 			try
@@ -120,6 +123,7 @@ public abstract class AbstractServer
 			catch (MTAException e)
 			{
 				logger.error(CONST_ERR_MTA_PROCESSING, e);
+				break;
 			}
 
 			// Print out the response
