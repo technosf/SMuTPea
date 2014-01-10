@@ -44,8 +44,8 @@ public abstract class AbstractServer
 	/*
 	 * Constants
 	 */
-	private static final String CONST_MSG_CLIENT_DIALOGUE = "Dialogue from Client:[{}]";
-	private static final String CONST_MSG_MTA_DIALOGUE = "Dialogue from MTA:[{}]";
+	private static final String CONST_MSG_CLIENT_DIALOGUE = "Dialogue Client => MTA:[{}]";
+	private static final String CONST_MSG_MTA_DIALOGUE = "Dialogue MTA => Client:[{}]";
 	private static final String CONST_ERR_MTA_NULL = "MTA cannot be null";
 	private static final String CONST_ERR_IO_READ = "IO Error reading input line";
 	private static final String CONST_ERR_MTA_PROCESSING = "MTA error processing input line";
@@ -92,8 +92,8 @@ public abstract class AbstractServer
 			 * Test the MTA, connect to it and present the initial response
 			 */
 			requireNonNull(mta).connect();
+			logger.debug(CONST_MSG_MTA_DIALOGUE, mta.getResponse());
 			output.println(mta.getResponse());
-			logger.info(CONST_MSG_MTA_DIALOGUE, mta.getResponse());
 		}
 		catch (NullPointerException e)
 		// MTA was null
@@ -102,6 +102,7 @@ public abstract class AbstractServer
 		}
 
 		String line = null;
+		String response = null;
 
 		while (!mta.isClosed())
 		{
@@ -109,7 +110,6 @@ public abstract class AbstractServer
 			// Read a line of input
 			{
 				line = input.readLine();
-				logger.info(CONST_MSG_CLIENT_DIALOGUE, line);
 			}
 			catch (IOException e)
 			{
@@ -120,6 +120,7 @@ public abstract class AbstractServer
 			try
 			// Process the input line
 			{
+				logger.debug(CONST_MSG_CLIENT_DIALOGUE, line);
 				mta.processLine(line);
 			}
 			catch (MTAException e)
@@ -127,10 +128,13 @@ public abstract class AbstractServer
 				logger.error(CONST_ERR_MTA_PROCESSING, e);
 			}
 
-			// Print out the response
-			output.println(mta.getResponse());
-			logger.info(CONST_MSG_MTA_DIALOGUE, mta.getResponse());
-
+			if ((response = mta.getResponse()) != null && !response.isEmpty())
+			// There is output
+			{
+				// Print out the response
+				logger.debug(CONST_MSG_MTA_DIALOGUE, response);
+				output.println(response);
+			}
 		} // while (!mta.isClosed())
 
 		close();

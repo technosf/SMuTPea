@@ -54,11 +54,11 @@ public final class SocketSinkServer
 	 */
 	private static final String CONST_MSG_MAIN_START = "Main starting.";
 	private static final String CONST_MSG_MAIN_END = "Main ending.";
-	private static final String CONST_MSG_MTA_OPEN = "MTA connection opened.";
-	private static final String CONST_MSG_MTA_CLOSE = "MTA connection closed";
+	private static final String CONST_MSG_MTA_OPEN = "MTA connection opening.";
+	private static final String CONST_MSG_MTA_CLOSE = "MTA connection closed.";
 	private static final String CONST_MSG_SERVER_START = "Starting server on port:[{}]";
-	private static final String CONST_ERR_MTA_ERR = "MTA cannot be instantiated";
-	private static final String CONST_ERR_SERVER_REQ = "Unable to process client request";
+	private static final String CONST_ERR_MTA_ERR = "MTA cannot be instantiated.";
+	private static final String CONST_ERR_SERVER_REQ = "Unable to process client request.";
 
 	private static final Integer CONST_DEFAULT_SMTP_PORT = 25;
 
@@ -193,6 +193,8 @@ public final class SocketSinkServer
 	@Override
 	public void run()
 	{
+
+		logger.info(CONST_MSG_MTA_OPEN);
 		open();  // Open the connection
 	}
 

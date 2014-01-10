@@ -49,7 +49,7 @@ public abstract class AbstractMTA implements MTA
 	 * Constants
 	 */
 	private static final String CONST_MSG_PROCESS = "Processing line:[{}]";
-	private static final String CONST_MSG_NO_CMD = "No command found";
+	private static final String CONST_MSG_NO_CMD = "No command found.";
 	private static final String CONST_MSG_INVLD_SESS_STATE = "Invalid session state:[{}] for command:[{}s]";
 	private static final String CONST_MSG_UNKNOWN_ERR = "Propagating unknown error:[{}]";
 

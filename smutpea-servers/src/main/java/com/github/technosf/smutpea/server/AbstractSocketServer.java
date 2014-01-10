@@ -69,6 +69,9 @@ public abstract class AbstractSocketServer extends AbstractServer
 				logger.error(CONST_ERR_SOCKET_CLOSE, e);
 			}
 		}
+
+		MDC.remove("Local InetAddress");
+		MDC.remove("Local Port");
 	}
 
 
