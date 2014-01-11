@@ -1,21 +1,23 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
-<!--
-  Copyright 2014 technosf [https://github.com/technosf]
-  
-  Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
-  the License. You may obtain a copy of the License at
-  
-  http://www.apache.org/licenses/LICENSE-2.0
-  
-  Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
-  an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
-  specific language governing permissions and limitations under the License.
--->
+	<!-- Copyright 2013 technosf [https://github.com/technosf] -->
+	<!-- -->
+	<!-- Licensed under the Apache License, Version 2.0 (the "License"); -->
+	<!-- you may not use this file except in compliance with the License. -->
+	<!-- You may obtain a copy of the License at -->
+	<!-- -->
+	<!-- http://www.apache.org/licenses/LICENSE-2.0 -->
+	<!-- -->
+	<!-- Unless required by applicable law or agreed to in writing, -->
+	<!-- software distributed under the License is distributed on -->
+	<!-- an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY -->
+	<!-- KIND, either express or implied. See the License for the -->
+	<!-- specific language governing permissions and limitations -->
+	<!-- under the License. -->
 
 	<modelVersion>4.0.0</modelVersion>
-	
+
 	<parent>
 		<groupId>com.github.technosf.smutpea</groupId>
 		<artifactId>smutpea</artifactId>
@@ -32,38 +34,73 @@
 			<comments>A business-friendly OSS license</comments>
 		</license>
 	</licenses>
-
-<!-- 	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>exec-maven-plugin</artifactId>
-				<version>1.2.1</version>
-				<executions>
-					<execution>
-                        <id>CLISink</id>
-						<goals>
-							<goal>java</goal>
-						</goals>
-					</execution>
-				</executions>
-				<configuration>
-					<mainClass>com.github.technosf.smutpea.server.example.CLISinkServer</mainClass>
-				</configuration>
-			</plugin>
-		</plugins>
-	</build> -->
 	
+	<profiles>
+		<profile>
+		<!-- 
+			mvn exec:exec -DCLISink 
+		-->
+			<id>CLISink</id>
+			<activation>
+				<property>
+					<name>CLISink</name>
+				</property>
+			</activation>
+			<build>
+			<plugins>
+				<plugin>
+					<groupId>org.codehaus.mojo</groupId>
+					<artifactId>exec-maven-plugin</artifactId>
+					<configuration>
+						<executable>java</executable>
+						<arguments>
+							<argument>-classpath</argument>
+							<classpath />
+							<argument>
+								com.github.technosf.smutpea.server.example.CLISinkServer
+							</argument>
+						</arguments>
+					</configuration>
+				</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+		<!-- 
+			mvn exec:exec -DSocketSink 
+		-->
+			<id>SocketSink</id>
+			<activation>
+				<property>
+					<name>SocketSink</name>
+				</property>
+			</activation>
+			<build>
+			<plugins>
+				<plugin>
+					<groupId>org.codehaus.mojo</groupId>
+					<artifactId>exec-maven-plugin</artifactId>
+					<configuration>
+						<executable>java</executable>
+						<arguments>
+							<argument>-classpath</argument>
+							<classpath />
+							<argument>
+								com.github.technosf.smutpea.server.example.SocketSinkServer
+							</argument>
+						</arguments>
+					</configuration>
+				</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+
 	<dependencies>
 		<dependency>
 			<groupId>com.github.technosf.smutpea</groupId>
 			<artifactId>smutpea-mta</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>com.google.inject</groupId>
-			<artifactId>guice</artifactId>
-			<version>3.0</version>
 		</dependency>
 	</dependencies>
 </project>
