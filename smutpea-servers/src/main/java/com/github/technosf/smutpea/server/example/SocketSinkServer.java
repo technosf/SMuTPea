@@ -125,7 +125,6 @@ public final class SocketSinkServer
 							Socket clientSocket = serverSocket.accept();
 							executorService.submit(new SocketSinkServer(clientSocket));
 						}
-
 					}
 					catch (IOException e)
 					{
@@ -193,7 +192,6 @@ public final class SocketSinkServer
 	@Override
 	public void run()
 	{
-
 		logger.info(CONST_MSG_MTA_OPEN);
 		open();  // Open the connection
 	}
