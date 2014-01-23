@@ -22,9 +22,15 @@
 		<groupId>com.github.technosf.smutpea</groupId>
 		<artifactId>smutpea</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
+		<relativePath>../pom.xml</relativePath>
 	</parent>
+	
 	<artifactId>smutpea-mta</artifactId>
 	<name>SMuTPea MTA</name>
+	<url>https://github.com/technosf/SMuTPea</url>
+	<description>MTA code and helpers
+
+Licensed under Apache 2.0</description>
 
 	<licenses>
 		<license>
@@ -35,6 +41,15 @@
 		</license>
 	</licenses>
 
+	<issueManagement>
+		<url>https://github.com/technosf/SMuTPea/issues</url>
+		<system>github</system>
+	</issueManagement>
+	<scm>
+		<connection>https://github.com/technosf/SMuTPea.git</connection>
+		<developerConnection>https://github.com/technosf/SMuTPea.git</developerConnection>
+		<url>https://github.com/technosf/SMuTPea</url>
+	</scm>
 
 
 	<dependencies>
@@ -44,4 +59,5 @@
 			<version>${version}</version>
 		</dependency>
 	</dependencies>
+
 </project>

@@ -44,6 +44,7 @@
 	<description>SMuTPea is a Java library for constructing RFC-compliant Simple Mail Transport Protocol (SMTP) agents.
 
 Licensed under Apache 2.0</description>
+
 	<issueManagement>
 		<url>https://github.com/technosf/SMuTPea/issues</url>
 		<system>github</system>

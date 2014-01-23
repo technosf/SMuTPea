@@ -22,9 +22,15 @@
 		<groupId>com.github.technosf.smutpea</groupId>
 		<artifactId>smutpea</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
+		<relativePath>../pom.xml</relativePath>
 	</parent>
 	<artifactId>smutpea-servers</artifactId>
+	
 	<name>SMuTPea Servers</name>
+	<url>https://github.com/technosf/SMuTPea</url>
+	<description>SMTP Servers and helpers
+	
+Licensed under Apache 2.0</description>
 
 	<licenses>
 		<license>
@@ -34,6 +40,16 @@
 			<comments>A business-friendly OSS license</comments>
 		</license>
 	</licenses>
+	
+	<issueManagement>
+		<url>https://github.com/technosf/SMuTPea/issues</url>
+		<system>github</system>
+	</issueManagement>
+	<scm>
+		<connection>https://github.com/technosf/SMuTPea.git</connection>
+		<developerConnection>https://github.com/technosf/SMuTPea.git</developerConnection>
+		<url>https://github.com/technosf/SMuTPea</url>
+	</scm>
 	
 	<profiles>
 		<profile>
@@ -103,4 +119,5 @@
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
+
 </project>

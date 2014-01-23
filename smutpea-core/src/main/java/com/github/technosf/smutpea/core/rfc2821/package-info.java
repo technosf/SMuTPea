@@ -12,7 +12,7 @@
  */
 
 /**
- * SMTP dialogues as defined by RFC2821
+ * SMTP objects, constraints and dialogues as defined by RFC2821
  * 
  * @see http://tools.ietf.org/html/rfc2821
  * 

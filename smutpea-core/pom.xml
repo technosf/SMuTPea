@@ -29,6 +29,10 @@
 
 	<artifactId>smutpea-core</artifactId>
 	<name>SMuTPea Core</name>
+	<url>https://github.com/technosf/SMuTPea</url>
+	<description>Definition of core SMTP RFC objects and the interface for an MTA
+
+Licensed under Apache 2.0</description>
 
 	<licenses>
 		<license>
@@ -39,4 +43,14 @@
 		</license>
 	</licenses>
 
+	<issueManagement>
+		<url>https://github.com/technosf/SMuTPea/issues</url>
+		<system>github</system>
+	</issueManagement>
+	<scm>
+		<connection>https://github.com/technosf/SMuTPea.git</connection>
+		<developerConnection>https://github.com/technosf/SMuTPea.git</developerConnection>
+		<url>https://github.com/technosf/SMuTPea</url>
+	</scm>
+	
 </project>

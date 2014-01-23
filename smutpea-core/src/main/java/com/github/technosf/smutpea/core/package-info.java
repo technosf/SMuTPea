@@ -12,7 +12,7 @@
  */
 
 /**
- * Definition of core SMTP and the interface for an MTA
+ * Definition of core SMTP RFC objects and the interface for an MTA
  * 
  * @author technosf
  * @since 0.0.1
