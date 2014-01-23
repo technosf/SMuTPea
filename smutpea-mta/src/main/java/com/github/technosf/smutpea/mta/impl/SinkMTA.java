@@ -72,6 +72,7 @@ public final class SinkMTA
 	{
 		super(CONST_MTA_NAME, domain);
 		mta = this;
+		replyCode = ReplyCode._220;
 	}
 
 

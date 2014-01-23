@@ -263,9 +263,14 @@ public abstract class AbstractMTA implements MTA
 	@Override
 	public final boolean isClosed()
 	{
-		return SessionState.CLOSED == session.getStateTable().getState();
-	}
+		if (session != null &&
+						SessionState.CLOSED == session.getStateTable().getState())
+		{
+			return true;
+		}
 
+		return false;
+	}
 
 	/**
 	 * {@inheritDoc}

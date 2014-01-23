@@ -13,14 +13,15 @@
 
 package com.github.technosf.smutpea.mta;
 
+import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertSame;
 import static org.testng.Assert.assertTrue;
 
-import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import com.github.technosf.smutpea.core.exceptions.MTAException;
-import com.github.technosf.smutpea.core.rfc2821.Command.CommandLine;
 import com.github.technosf.smutpea.core.rfc2821.ReplyCode;
 
 /**
@@ -34,149 +35,76 @@ import com.github.technosf.smutpea.core.rfc2821.ReplyCode;
 public abstract class AbstractMTAAbstractTest
 {
 
-	/**
-	 * The class under test
-	 */
-	AbstractMTA classUnderTest = getClassUnderTest();
-
+	AbstractMTA mta;
 
 	/**
-	 * @return
+	 * Creates and returns a new AbstractMTA
+	 * 
+	 * @return a new AbstractMTA implementation
 	 */
-	protected abstract AbstractMTA getClassUnderTest();
-
-
-	@BeforeClass
-	public void BeforeClass() throws MTAException
-	{
-		assertNotNull(classUnderTest);
-
-		AbstractMTA mta = new AbstractMTA(null, null)
-			{
-
-				@Override
-				public ReplyCode getReplyCode()
-				{
-					// TODO Auto-generated method stub
-					return null;
-				}
-
-				@Override
-				protected void processValidCommand(CommandLine commandLine) throws MTAException
-				{
-					// TODO Auto-generated method stub
-
-				}
-
-				@Override
-				protected void processInvalidCommand(CommandLine commandLine) throws MTAException
-				{
-					// TODO Auto-generated method stub
-
-				}
-
-				@Override
-				protected void sendMessage(String message)
-				{
-					// TODO Auto-generated method stub
-
-				}
-			};
-	}
+	protected abstract AbstractMTA getNewClassUnderTest();
 
 	/**
 	 * @throws MTAException
-	 * 
 	 */
-	@Test
-	public void AbstractMTA() throws MTAException
+	@BeforeMethod
+	public void beforeMethod() throws MTAException
 	{
-
+		mta = getNewClassUnderTest();
+		assertNotNull(mta);
 	}
 
-	@Test
-	public void command()
-	{
-		throw new RuntimeException("Test not implemented");
-	}
+	/*
+	 * @Test public void command() { throw new RuntimeException("Test not implemented"); }
+	 */
 
 	@Test
 	public void connect()
 	{
-		throw new RuntimeException("Test not implemented");
+		mta.connect();
+		assertEquals(mta.getResponse().substring(0, 4), "220 ", "Unexpected response code for connect");
+		assertSame(mta.getReplyCode(), ReplyCode._220);
 	}
+
 
 	@Test
 	public void getMTADateTime()
 	{
-		throw new RuntimeException("Test not implemented");
+		assertNotNull(mta.getMTADateTime());
 	}
+
 
 	@Test
 	public void getMTADomain()
 	{
-		assertNotNull(classUnderTest.getMTADomain());
-		assertTrue(classUnderTest.getMTADomain().trim().length() > 0);
+		assertNotNull(mta.getMTADomain());
+		assertTrue(mta.getMTADomain().trim().length() > 0);
 	}
 
 	@Test
 	public void getMTAName()
 	{
-		assertNotNull(classUnderTest.getMTAName());
-		assertTrue(classUnderTest.getMTAName().trim().length() > 0);
+		assertNotNull(mta.getMTAName());
+		assertTrue(mta.getMTAName().trim().length() > 0);
 	}
 
-	@Test
-	public void getResponse()
-	{
-		throw new RuntimeException("Test not implemented");
-	}
-
-	@Test
-	public void isClosed()
-	{
-		throw new RuntimeException("Test not implemented");
-	}
-
-	@Test
-	public void processInvalidCommand()
-	{
-		throw new RuntimeException("Test not implemented");
-	}
-
-	@Test
-	public void processLine()
-	{
-		throw new RuntimeException("Test not implemented");
-	}
-
-	@Test
-	public void processValidCommand()
-	{
-		throw new RuntimeException("Test not implemented");
-	}
-
-	@Test
-	public void send()
-	{
-		throw new RuntimeException("Test not implemented");
-	}
-
-	@Test
-	public void sendMessage()
-	{
-		throw new RuntimeException("Test not implemented");
-	}
-
-	@Test
-	public void setResponseString()
-	{
-		throw new RuntimeException("Test not implemented");
-	}
-
-	@Test
-	public void setResponseReplyCode()
-	{
-		throw new RuntimeException("Test not implemented");
-	}
+	/*
+	 * @Test public void getResponse() { throw new RuntimeException("Test not implemented"); }
+	 * 
+	 * @Test public void isClosed() { throw new RuntimeException("Test not implemented"); }
+	 * 
+	 * @Test public void processInvalidCommand() { throw new RuntimeException("Test not implemented"); }
+	 * 
+	 * @Test public void processLine() { throw new RuntimeException("Test not implemented"); }
+	 * 
+	 * @Test public void processValidCommand() { throw new RuntimeException("Test not implemented"); }
+	 * 
+	 * @Test public void send() { throw new RuntimeException("Test not implemented"); }
+	 * 
+	 * @Test public void sendMessage() { throw new RuntimeException("Test not implemented"); }
+	 * 
+	 * @Test public void setResponseString() { throw new RuntimeException("Test not implemented"); }
+	 * 
+	 * @Test public void setResponseReplyCode() { throw new RuntimeException("Test not implemented"); }
+	 */
 }
