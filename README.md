@@ -22,7 +22,18 @@ Thinking about the infrastructure to hand and the way the testing was going to h
 
 ## Modules ##
 
+### SMuTPea-Core ###
+*Core* embodies the SMTP RFCs as _Objects_, enforcing the RFC rules, defining the role of the *MTA* while leaving it implementation up to you.
+This allows implementors to write their own MTA without having to write the defined dialogues or rules around it, leaving the enforcement of that up to SMutPea-Core.
 
+### SMuTPea-MTA ###
+*MTA* provides an abstract MTA that can be extended by the MTA writer. This abstract MTA provides some basic functionality and breaks out the choices the MTA implementor has to consider into well-defined abstract methods.
+Also provided here is a _Sink_ MTA: An MTA that looks and acts like an MTA but requires no configuration, no network connection and sends no email. 
+Having an MTA that requires not set up and will not send email is useful for testing applications that do expect an MTA to be available.
+
+### SMuTPea-Servers ###
+*Servers* provides abstract _servers_ that manage the MTA lifecycle. There are two abstract servers, one that manages the MTA lifecycle on standard _input/output_ streams, and one managing the MTA lifecycle on network _sockets_.
+There are also example server implementations that put a _Sink_ server on the command line (allowing the user to practice SMTP interactively themselves) and on TCP sockets.
 
 ## License ##
 
