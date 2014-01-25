@@ -25,8 +25,8 @@
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 
-	<artifactId>smutpea-core</artifactId>
-	<name>SMuTPea Core</name>
+	<artifactId>smutpea-all</artifactId>
+	<name>SMuTPea All</name>
 
 	<licenses>
 		<license>
@@ -37,4 +37,52 @@
 		</license>
 	</licenses>
 
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-shade-plugin</artifactId>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>shade</goal>
+						</goals>
+						<configuration>
+							<artifactSet>
+								<excludes>
+									<exclude>org.testng:testng</exclude>
+									<exclude>org.easymock:easymock</exclude>
+								</excludes>
+								<includes>
+									<include>${project.groupId}</include>
+									<include>org.slf4j:slf4j-api</include>
+									<include>org.slf4j:slf4j-simple</include>
+								</includes>
+							</artifactSet>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+		</plugins>
+	</build>
+
+	<dependencies>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>smutpea-core</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>smutpea-mta</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>smutpea-servers</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+	</dependencies>
 </project>

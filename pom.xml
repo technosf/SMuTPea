@@ -1,22 +1,18 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
-	<!-- Copyright 2013 technosf [https://github.com/technosf] -->
-	<!-- -->
-	<!-- Licensed under the Apache License, Version 2.0 (the "License"); -->
-	<!-- you may not use this file except in compliance with the License. -->
-	<!-- You may obtain a copy of the License at -->
-	<!-- -->
-	<!-- http://www.apache.org/licenses/LICENSE-2.0 -->
-	<!-- -->
-	<!-- Unless required by applicable law or agreed to in writing, -->
-	<!-- software distributed under the License is distributed on -->
-	<!-- an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY -->
-	<!-- KIND, either express or implied. See the License for the -->
-	<!-- specific language governing permissions and limitations -->
-	<!-- under the License. -->
-
+<!--
+  Copyright 2014 technosf [https://github.com/technosf]
+  
+  Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+  the License. You may obtain a copy of the License at
+  
+  http://www.apache.org/licenses/LICENSE-2.0
+  
+  Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+  an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+  specific language governing permissions and limitations under the License.
+-->
 
 	<modelVersion>4.0.0</modelVersion>
 
@@ -25,9 +21,11 @@
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
+	<inceptionYear>2013</inceptionYear>
+	
 	<name>SMuTPea</name>
 	<url>https://github.com/technosf/SMuTPea</url>
-
+	
 	<licenses>
 		<license>
 			<name>The Apache Software License, Version 2.0</name>
@@ -44,7 +42,6 @@
 	<description>SMuTPea is a Java library for constructing RFC-compliant Simple Mail Transport Protocol (SMTP) agents.
 
 Licensed under Apache 2.0</description>
-
 	<issueManagement>
 		<url>https://github.com/technosf/SMuTPea/issues</url>
 		<system>github</system>
@@ -56,10 +53,10 @@ Licensed under Apache 2.0</description>
 	</scm>
 
 	<modules>
-
 		<module>smutpea-core</module>
-		<module>smutpea-servers</module>
 		<module>smutpea-mta</module>
+		<module>smutpea-servers</module>
+		<module>smutpea-all</module>
 	</modules>
 
 	<build>
@@ -77,22 +74,13 @@ Licensed under Apache 2.0</description>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-shade-plugin</artifactId>
 				<version>2.2</version>
-				<executions>
-					<execution>
-						<phase>package</phase>
-						<goals>
-							<goal>shade</goal>
-						</goals>
-						<configuration>
-							<finalName>${project.artifactId}-shaded</finalName>
-							<artifactSet>
-								<includes>
-									<include>com.github.technosf.smutpea:*</include>
-								</includes>
-							</artifactSet>
-						</configuration>
-					</execution>
-				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>2.9.1</version>
+				<configuration>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>
@@ -102,11 +90,13 @@ Licensed under Apache 2.0</description>
 			<groupId>org.testng</groupId>
 			<artifactId>testng</artifactId>
 			<version>6.8.7</version>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.easymock</groupId>
 			<artifactId>easymock</artifactId>
 			<version>3.2</version>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
@@ -120,5 +110,4 @@ Licensed under Apache 2.0</description>
 			<scope>runtime</scope>
 		</dependency>
 	</dependencies>
-	<inceptionYear>2013</inceptionYear>
 </project>
