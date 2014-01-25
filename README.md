@@ -7,9 +7,8 @@ SMuTPea is a Java framework for constructing RFC-compliant Simple Mail Transport
 - [Why a SMTP framework](#why-a-smtp-framework)
 - [Modules](#modules)
 - [Examples](#examples)
-- [Write your own MTA](write-your-own-mta)
+- [Write your own MTA](#write-your-own-mta)
 - [Testing Applications that Email with SMuTPea](#testing-applications-that-email-with-smutpea)
-
 - [License](#license)
 
 
@@ -27,11 +26,11 @@ Thinking about the infrastructure to hand and the way the testing was going to h
 ## Modules ##
 
 SMuTPea is a built around [Apache Maven](https://maven.apache.org/). 
-To build the project, from its top-level directory:
+To build the project, from the project top-level directory:
 ```
 mvn package
 ```
-This will compile the classes, run the unit-tests, and build _.jar_ files for each module with an _uber_ .jar repleat wit dependencies under _smutpea\_all/target_.
+This will compile the classes, run the unit-tests, and build _.jar_ files for each module with an _uber_ .jar repleat wit dependencies under _smutpea_all/target_.
 
 ### SMuTPea-Core ###
 **Core** embodies the SMTP RFCs as _Objects_, enforcing the RFC rules, defining the role of the **MTA** while leaving it implementation up to you.
