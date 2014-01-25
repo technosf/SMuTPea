@@ -21,6 +21,12 @@ Thinking about the infrastructure to hand and the way the testing was going to h
 
 
 ## Modules ##
+SMuTPea is a built around [Apache Maven](https://maven.apache.org/). 
+To build the project, from its top-level directory:
+```
+mvn package
+```
+This will compile the classes, run the unit-tests, and build _.jar_ files for each module with an _uber_ .jar repleat wit dependencies under _smutpea\_all/target_.
 
 ### SMuTPea-Core ###
 **Core** embodies the SMTP RFCs as _Objects_, enforcing the RFC rules, defining the role of the **MTA** while leaving it implementation up to you.
@@ -34,6 +40,22 @@ Having a MTA that requires no set up and _will not send email_ is useful for tes
 ### SMuTPea-Servers ###
 **Servers** provides abstract _servers_ that manage the MTA lifecycle. There are two abstract servers, one that manages the MTA lifecycle on standard _input/output_ streams, and one managing the MTA lifecycle on network _sockets_.
 There are also example server implementations that put a _Sink_ server on the command line (allowing the user to practice SMTP interactively themselves) and on TCP sockets.
+
+### SMuTPea-All ###
+**All** is an assembly module that take SMuTPea and it dependencies and puts them in a single jar for distribution and execution.
+
+
+## Examples ##
+Included are a couple of example SMTP server implementation servers that utilize the _sink_ MTA. One server is the command line server. It can be executed thus:
+```
+java -cp smutpea-all-xyz.jar com.github.technosf.smutpea.server.exampl.CLISinkServer
+```
+
+And with debgging on so the program flow can be examined:
+```
+java -Dorg.slf4j.simpleLogger.defaultLogLevel=debug -cp smutpea-all-xyz.jar com.github.technosf.smutpea.server.exampl.CLISinkServer
+```
+
 
 ## License ##
 
