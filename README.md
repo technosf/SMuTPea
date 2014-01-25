@@ -6,6 +6,10 @@ SMuTPea is a Java framework for constructing RFC-compliant Simple Mail Transport
 
 - [Why a SMTP framework](#why-a-smtp-framework)
 - [Modules](#modules)
+- [Examples](#examples)
+- [Write your own MTA](write-your-own-mta)
+- [Testing Applications that Email with SMuTPea](#testing-applications-that-email-with-smutpea)
+
 - [License](#license)
 
 
@@ -21,6 +25,7 @@ Thinking about the infrastructure to hand and the way the testing was going to h
 
 
 ## Modules ##
+
 SMuTPea is a built around [Apache Maven](https://maven.apache.org/). 
 To build the project, from its top-level directory:
 ```
@@ -45,7 +50,18 @@ There are also example server implementations that put a _Sink_ server on the co
 **All** is an assembly module that take SMuTPea and it dependencies and puts them in a single jar for distribution and execution.
 
 
+## Write your own MTA ##
+
+Using the *MTA* interface, implement the methods as you wish, processing the SMTP commands as you wish, and SMTP will validate input and output for protocol and tell you when you're out of step with the SMTP RFC.
+
+
+## Testing Applications that Email with SMuTPea ##
+
+It was the need to test email producing applications that sparked the creation of SMuTPea. Setting up an SMTP server for unit testing and ensuring that all testing be leak-proof is easy... until it fails. SMuTPea's SinkMTA can be stood-up without configuration and will not, cannot leak email. SMuTPea can also provide you with stats on the email dispatches requested.
+
+
 ## Examples ##
+
 Included are a couple of example SMTP server implementation servers that utilize the _sink_ MTA. One server is the command line server. It can be executed thus:
 ```
 java -cp smutpea-all-xyz.jar com.github.technosf.smutpea.server.exampl.CLISinkServer
