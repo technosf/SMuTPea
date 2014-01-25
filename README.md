@@ -30,7 +30,7 @@ To build the project, from the project top-level directory:
 ```
 mvn package
 ```
-This will compile the classes, run the unit-tests, and build _.jar_ files for each module with an _uber_ .jar repleat wit dependencies under _smutpea_all/target_.
+This will compile the classes, run the unit-tests, and build _.jar_ files for each module with an _uber_ .jar repleat wit dependencies under *smutpea_all/target*.
 
 ### SMuTPea-Core ###
 **Core** embodies the SMTP RFCs as _Objects_, enforcing the RFC rules, defining the role of the **MTA** while leaving it implementation up to you.
