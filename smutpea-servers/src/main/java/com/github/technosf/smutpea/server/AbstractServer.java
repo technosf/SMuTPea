@@ -39,20 +39,27 @@ import com.github.technosf.smutpea.core.exceptions.MTAException;
  */
 public abstract class AbstractServer
 {
-	private static final Logger logger = LoggerFactory.getLogger(AbstractServer.class);
+	private static final Logger logger = LoggerFactory
+					.getLogger(AbstractServer.class);
 
 	/*
 	 * Constants
 	 */
-	private static final String CONST_MSG_CLIENT_DIALOGUE = "Dialogue Client => MTA:[{}]";
-	private static final String CONST_MSG_MTA_DIALOGUE = "Dialogue MTA => Client:[{}]";
+	private static final String CONST_MSG_CLIENT_DIALOGUE =
+					"Dialogue <{}#{}> Client => MTA:[{}]";
+	private static final String CONST_MSG_MTA_DIALOGUE =
+					"Dialogue <{}#{}> MTA => Client:[{}]";
 	private static final String CONST_ERR_MTA_NULL = "MTA cannot be null";
-	private static final String CONST_ERR_IO_READ = "IO Error reading input line";
-	private static final String CONST_ERR_MTA_PROCESSING = "MTA error processing input line";
+	private static final String CONST_ERR_IO_READ =
+					"IO Error reading input line";
+	private static final String CONST_ERR_MTA_PROCESSING =
+					"MTA error processing input line";
 
+	private static final String CONST_ZPAD = "%04d";
 
-	private final BufferedReader input;
-	private final PrintStream output;
+	private final InputStream in;
+	private final OutputStream out;
+
 
 	/**
 	 * Constructor setting the {@code MTA} and input/output
@@ -62,9 +69,10 @@ public abstract class AbstractServer
 	 */
 	protected AbstractServer(final InputStream in, final OutputStream out)
 	{
-		this.input = new BufferedReader(new InputStreamReader(in));
-		this.output = new PrintStream(out);
+		this.in = in;
+		this.out = out;
 	}
+
 
 	/**
 	 * Provides an MTA for this instance
@@ -73,18 +81,36 @@ public abstract class AbstractServer
 	 */
 	protected abstract MTA getMTA();
 
+
 	/**
 	 * Clean up on MTA close.
 	 */
 	protected abstract void close();
 
+
 	/**
 	 * Serve the MTA up on the Input and Output streams
-	 * 
 	 */
 	public void open()
 	{
+		int dialogue = 0;
+		long uniquer = (Math.abs(System.nanoTime() / 1000000) * -1000000) + System.nanoTime();
+
 		MTA mta = getMTA();
+
+		PrintStream output = new PrintStream(out);
+
+		try
+		// Flush detrius from the input stream at the last moment.
+		{
+			in.skip(in.available());
+		}
+		catch (IOException e)
+		{
+			// NOOP
+		}
+
+		BufferedReader input = new BufferedReader(new InputStreamReader(in));
 
 		try
 		{
@@ -92,7 +118,7 @@ public abstract class AbstractServer
 			 * Test the MTA, connect to it and present the initial response
 			 */
 			requireNonNull(mta).connect();
-			logger.debug(CONST_MSG_MTA_DIALOGUE, mta.getResponse());
+			logger.debug(CONST_MSG_MTA_DIALOGUE, uniquer, String.format(CONST_ZPAD, dialogue++), mta.getResponse());
 			output.println(mta.getResponse());
 		}
 		catch (NullPointerException e)
@@ -120,7 +146,7 @@ public abstract class AbstractServer
 			try
 			// Process the input line
 			{
-				logger.debug(CONST_MSG_CLIENT_DIALOGUE, line);
+				logger.debug(CONST_MSG_CLIENT_DIALOGUE, uniquer, String.format(CONST_ZPAD, dialogue++), line);
 				mta.processLine(line);
 			}
 			catch (MTAException e)
@@ -132,7 +158,7 @@ public abstract class AbstractServer
 			// There is output
 			{
 				// Print out the response
-				logger.debug(CONST_MSG_MTA_DIALOGUE, response);
+				logger.debug(CONST_MSG_MTA_DIALOGUE, uniquer, String.format(CONST_ZPAD, dialogue++), response);
 				output.println(response);
 			}
 		} // while (!mta.isClosed())
