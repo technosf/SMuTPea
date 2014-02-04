@@ -87,6 +87,27 @@ public abstract class AbstractServer
 	 */
 	protected abstract void close();
 
+	/**
+	 * Closes the InputStream
+	 * 
+	 * @throws IOException
+	 */
+	protected final void closeInputStream() throws IOException
+	{
+		in.close();
+	}
+
+
+	/**
+	 * Closes the OutputStream
+	 * 
+	 * @throws IOException
+	 */
+	protected final void closeOutputStream() throws IOException
+	{
+		out.close();
+	}
+
 
 	/**
 	 * Serve the MTA up on the Input and Output streams

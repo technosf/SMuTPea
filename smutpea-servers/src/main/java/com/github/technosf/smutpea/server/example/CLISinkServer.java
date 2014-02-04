@@ -13,6 +13,8 @@
 
 package com.github.technosf.smutpea.server.example;
 
+import java.io.IOException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -90,6 +92,24 @@ public class CLISinkServer extends AbstractServer
 	@Override
 	protected void close()
 	{
+		try
+		{
+			closeInputStream();
+		}
+		catch (IOException e)
+		{
+			// Close quietly
+		}
+
+		try
+		{
+			closeOutputStream();
+		}
+		catch (IOException e)
+		{
+			// Close quietly
+		}
+
 		logger.info(CONST_MSG_MTA_CLOSE);
 	}
 
