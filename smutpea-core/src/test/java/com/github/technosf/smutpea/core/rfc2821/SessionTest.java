@@ -354,17 +354,6 @@ public class SessionTest
 	 * 
 	 */
 	@Test
-	public void getBuffer()
-	{
-		assertNotNull(classUnderTest.getBuffer());
-		assertEquals(classUnderTest.getBuffer().getClass(), Buffer.class);
-	}
-
-
-	/**
-	 * 
-	 */
-	@Test
 	public void getStateTable()
 	{
 		assertNotNull(classUnderTest.getStateTable());

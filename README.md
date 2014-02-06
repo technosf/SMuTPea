@@ -62,15 +62,16 @@ It was the need to test email producing applications that sparked the creation o
 
 ## Examples ##
 
-Included are a couple of example SMTP server implementation servers that utilize the _sink_ MTA. One server is the command line server. It can be executed thus:
+Included are a couple of example SMTP server implementation servers that utilize the _sink_ MTA. One server is the command line server,__CLISinkServer__. It can be executed thus:
 ```
-java -cp smutpea-all-xyz.jar com.github.technosf.smutpea.server.exampl.CLISinkServer
+java -cp smutpea-all-0.0.1-SNAPSHOT.jar com.github.technosf.smutpea.server.example.CLISinkServer
 ```
 
 And with debgging on so the program flow can be examined:
 ```
-java -Dorg.slf4j.simpleLogger.defaultLogLevel=debug -cp smutpea-all-xyz.jar com.github.technosf.smutpea.server.exampl.CLISinkServer
+java -Dorg.slf4j.simpleLogger.defaultLogLevel=debug -cp smutpea-all-0.0.1-SNAPSHOT.jar com.github.technosf.smutpea.server.example.CLISinkServer
 ```
+The other example server is a socket-based sink server __SocketSinkServer__.
 
 
 ## License ##

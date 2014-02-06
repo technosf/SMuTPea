@@ -323,7 +323,7 @@ public abstract class AbstractMTA implements MTA
     @Override
     public final void send() throws MTAException
     {
-        sendMessage(session.getBuffer().toString());
+        sendMessage(getBuffer().toString());
     }
 
 

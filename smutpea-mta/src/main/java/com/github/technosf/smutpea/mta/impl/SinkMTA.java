@@ -16,6 +16,7 @@ package com.github.technosf.smutpea.mta.impl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.github.technosf.smutpea.core.Buffer;
 import com.github.technosf.smutpea.core.MTA;
 import com.github.technosf.smutpea.core.exceptions.MTAException;
 import com.github.technosf.smutpea.core.rfc2821.Command.CommandLine;
@@ -27,6 +28,8 @@ import com.github.technosf.smutpea.mta.AbstractMTA;
  * <p>
  * Although {@code SinkMTA} is a valid MTA, no validation of destinations, hosts or email addresses is done - everything
  * is accepted so that to the client, everything looks OK unless the client violates the RFC.
+ * <p>
+ * {@code SinkMTA} uses {@code NullBuffer} and the mail <em>Buffer</em>, so no data sent to the MTA is retrievable.
  * 
  * @author technosf
  * @since 0.0.1
@@ -47,6 +50,11 @@ public final class SinkMTA
 					"Invalid command processed:[{}] giving code:[{}]";
 	private static final String CONST_MSG_SENT =
 					"Mail sent to /dev/null with code:[{}]";
+
+	/**
+	 * Use a {@code NullBuffer} as no EMail will be sent
+	 */
+	private final Buffer buffer = new NullBuffer();
 
 	/**
      * 
@@ -165,6 +173,18 @@ public final class SinkMTA
 						String.format("%1$s %2$s", ReplyCode._250.getCode(), // TODO validate
 										"Mail sent to /dev/null"));
 		logger.info(CONST_MSG_SENT, getReplyCode().getCode());
+	}
+
+
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see com.github.technosf.smutpea.core.MTA#getBuffer()
+	 */
+	@Override
+	public Buffer getBuffer()
+	{
+		return buffer;
 	}
 
 }

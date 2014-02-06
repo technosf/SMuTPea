@@ -11,7 +11,7 @@
  * specific language governing permissions and limitations under the License.
  */
 
-package com.github.technosf.smutpea.core.rfc2821;
+package com.github.technosf.smutpea.mta.impl;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotEquals;
@@ -25,6 +25,9 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import com.github.technosf.smutpea.core.Buffer;
+import com.github.technosf.smutpea.core.rfc2821.Session;
+
 /**
  * Unit test for {@code Buffer}
  * 
@@ -33,7 +36,7 @@ import org.testng.annotations.Test;
  * @version 0.0.1
  * 
  */
-public class BufferTest
+public class BasicBufferTest
 {
 
 	private static final String UNIQUE_VALUE = String.valueOf(System
@@ -75,7 +78,7 @@ public class BufferTest
 	@BeforeMethod
 	public void setupClassUnderTest()
 	{
-		classUnderTest = new Buffer();
+		classUnderTest = new BasicBuffer();
 		// Prime
 		classUnderTest.setForwardPath(INIT_FORWARD);
 		classUnderTest.setReversePath(INIT_REVERSE);
@@ -89,7 +92,7 @@ public class BufferTest
 	@Test
 	public void initialization()
 	{
-		Buffer uninitializedBuffer = new Buffer();
+		Buffer uninitializedBuffer = new BasicBuffer();
 
 		assertEquals(uninitializedBuffer.getForwardPath(), "");
 		assertEquals(uninitializedBuffer.getReversePath(), "");
