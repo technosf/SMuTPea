@@ -32,8 +32,6 @@
 		</license>
 	</licenses>
 
-
-
 	<dependencies>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
