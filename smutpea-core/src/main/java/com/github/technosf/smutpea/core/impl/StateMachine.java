@@ -11,14 +11,16 @@
  * specific language governing permissions and limitations under the License.
  */
 
-package com.github.technosf.smutpea.core.rfc2821;
+package com.github.technosf.smutpea.core.impl;
 
 import java.util.AbstractMap;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.github.technosf.smutpea.core.Command;
 import com.github.technosf.smutpea.core.exceptions.SessionClosedException;
 import com.github.technosf.smutpea.core.exceptions.SessionStateException;
+import com.github.technosf.smutpea.core.impl.rfc2821.Commands;
 
 /**
  * StateMachine synthesized from RFC2821 Section 4.1.4.
@@ -50,55 +52,55 @@ public final class StateMachine
                      * From CONNECT state
                      */
                     put(key(SessionState.CONNECT,
-                            Command.EHLO),
+                            Commands.EHLO),
                             SessionState.COMMAND);
                     put(key(SessionState.CONNECT,
-                            Command.HELO),
+                            Commands.HELO),
                             SessionState.COMMAND);
                     put(key(SessionState.CONNECT,
-                            Command.QUIT),
+                            Commands.QUIT),
                             SessionState.CLOSED);
                     put(key(SessionState.CONNECT,
-                            Command.NOOP),
+                            Commands.NOOP),
                             SessionState.CONNECT);
                     put(key(SessionState.CONNECT,
-                            Command.RSET),
+                            Commands.RSET),
                             SessionState.CONNECT);
                     /*
                      * From COMMAND state
                      */
                     put(key(SessionState.COMMAND,
-                            Command.MAIL),
+                            Commands.MAIL),
                             SessionState.RCPT);
                     put(key(SessionState.COMMAND,
-                            Command.NOOP),
+                            Commands.NOOP),
                             SessionState.COMMAND);
                     put(key(SessionState.COMMAND,
-                            Command.RSET),
+                            Commands.RSET),
                             SessionState.COMMAND);
                     put(key(SessionState.COMMAND,
-                            Command.VRFY),
+                            Commands.VRFY),
                             SessionState.COMMAND);
                     put(key(SessionState.COMMAND,
-                            Command.EXPN),
+                            Commands.EXPN),
                             SessionState.COMMAND);
                     put(key(SessionState.COMMAND,
-                            Command.HELP),
+                            Commands.HELP),
                             SessionState.COMMAND);
                     put(key(SessionState.COMMAND,
-                            Command.QUIT),
+                            Commands.QUIT),
                             SessionState.CLOSED);
                     /*
                      * From RCPT state
                      */
                     put(key(SessionState.RCPT,
-                            Command.RCPT),
+                            Commands.RCPT),
                             SessionState.RCPT);
                     put(key(SessionState.RCPT,
-                            Command.DATA),
+                            Commands.DATA),
                             SessionState.DATA);
                     put(key(SessionState.RCPT,
-                            Command.NOOP),
+                            Commands.NOOP),
                             SessionState.RCPT);
                 }
             };
@@ -123,7 +125,7 @@ public final class StateMachine
      */
     public static SessionState nextState(SessionState startingState,
             Command command)
-            throws SessionClosedException, SessionStateException
+                    throws SessionClosedException, SessionStateException
     {
         if (SessionState.CLOSED == startingState)
         // If the session is closed, then no more commands can be satisfied.

@@ -18,6 +18,8 @@ import static org.testng.Assert.assertTrue;
 
 import org.testng.annotations.Test;
 
+import com.github.technosf.smutpea.core.ReplyCode;
+
 /**
  * Unit test for {@code ReplyCode}
  * 

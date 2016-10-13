@@ -13,7 +13,7 @@
 
 package com.github.technosf.smutpea.core.exceptions;
 
-import com.github.technosf.smutpea.core.rfc2821.Command.CommandLine;
+import com.github.technosf.smutpea.core.Command.CommandLine;
 
 /**
  * Message Transfer Agent Exception
@@ -27,87 +27,87 @@ import com.github.technosf.smutpea.core.rfc2821.Command.CommandLine;
 public class MTAException extends Exception
 {
 
-	/**
-	 * guid
-	 */
-	private static final long	serialVersionUID	= -3698290378816841524L;
+    /**
+     * guid
+     */
+    private static final long serialVersionUID = -3698290378816841524L;
 
-	/**
-	 * The command line at the root of this exception
-	 */
-	private final CommandLine	commandLine;
-
-
-	/**
-	 * Constructor
-	 * 
-	 * @param message
-	 *            A helpful message
-	 */
-	public MTAException(final String message)
-	{
-		super(message);
-		this.commandLine = null;
-	}
+    /**
+     * The command line at the root of this exception
+     */
+    private final CommandLine<?> commandLine;
 
 
-	/**
-	 * Constructor
-	 * 
-	 * @param message
-	 *            A helpful message
-	 * @param commandLine
-	 *            The command line at the root of this exception
-	 */
-	public MTAException(final String message,
-			final CommandLine commandLine)
-	{
-		super(message);
-		this.commandLine = commandLine;
-	}
+    /**
+     * Constructor
+     * 
+     * @param message
+     *            A helpful message
+     */
+    public MTAException(final String message)
+    {
+        super(message);
+        this.commandLine = null;
+    }
 
 
-	/**
-	 * Constructor
-	 * 
-	 * @param message
-	 *            A helpful message
-	 * @param exception
-	 *            The original exception
-	 */
-	public MTAException(final String message, final Throwable exception)
-	{
-		super(message, exception);
-		this.commandLine = null;
-	}
+    /**
+     * Constructor
+     * 
+     * @param message
+     *            A helpful message
+     * @param commandLine
+     *            The command line at the root of this exception
+     */
+    public MTAException(final String message,
+            final CommandLine<?> commandLine)
+    {
+        super(message);
+        this.commandLine = commandLine;
+    }
 
 
-	/**
-	 * Constructor
-	 * 
-	 * @param message
-	 *            A helpful message
-	 * @param commandLine
-	 *            The command line at the root of this exception
-	 * @param exception
-	 *            The original exception
-	 */
-	public MTAException(final String message,
-			final CommandLine commandLine, final Throwable exception)
-	{
-		super(message, exception);
-		this.commandLine = commandLine;
-	}
+    /**
+     * Constructor
+     * 
+     * @param message
+     *            A helpful message
+     * @param exception
+     *            The original exception
+     */
+    public MTAException(final String message, final Throwable exception)
+    {
+        super(message, exception);
+        this.commandLine = null;
+    }
 
 
-	/**
-	 * Returns the command line that the MTA choked on.
-	 * 
-	 * @return the erring command line
-	 */
-	public final CommandLine getCommandLine()
-	{
-		return commandLine;
-	}
+    /**
+     * Constructor
+     * 
+     * @param message
+     *            A helpful message
+     * @param commandLine
+     *            The command line at the root of this exception
+     * @param exception
+     *            The original exception
+     */
+    public MTAException(final String message,
+            final CommandLine<?> commandLine, final Throwable exception)
+    {
+        super(message, exception);
+        this.commandLine = commandLine;
+    }
+
+
+    /**
+     * Returns the command line that the MTA choked on.
+     * 
+     * @return the erring command line
+     */
+    public final CommandLine<?> getCommandLine()
+    {
+        return commandLine;
+    }
 
 }

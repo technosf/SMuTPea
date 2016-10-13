@@ -24,6 +24,9 @@ import org.testng.annotations.Test;
 
 import com.github.technosf.smutpea.core.exceptions.SessionClosedException;
 import com.github.technosf.smutpea.core.exceptions.SessionStateException;
+import com.github.technosf.smutpea.core.impl.SessionState;
+import com.github.technosf.smutpea.core.impl.StateMachine;
+import com.github.technosf.smutpea.core.impl.rfc2821.Commands;
 
 /**
  * Unit test for {@code StateMachine}
@@ -43,7 +46,7 @@ public class StateMachineTest
 
 		for (SessionState state : SessionState.values())
 		{
-			for (Command command : Command.values())
+			for (Commands command : Commands.values())
 			{
 				Object result = null;
 
@@ -55,7 +58,7 @@ public class StateMachineTest
 				{
 					result =
 									StateMachine.STATE_TRANSITIONS
-													.get(new AbstractMap.SimpleImmutableEntry<SessionState, Command>(
+													.get(new AbstractMap.SimpleImmutableEntry<SessionState, Commands>(
 																	state, command));
 					if (result == null)
 					{
@@ -75,16 +78,16 @@ public class StateMachineTest
 
 
 	@Test(dataProvider = "keys")
-	public void key(SessionState state, Command command, Object result)
+	public void key(SessionState state, Commands command, Object result)
 	{
 		assertEquals(StateMachine.key(state, command),
-						new AbstractMap.SimpleImmutableEntry<SessionState, Command>(
+						new AbstractMap.SimpleImmutableEntry<SessionState, Commands>(
 										state, command));
 	}
 
 
 	@Test(dataProvider = "keys")
-	public void nextState(SessionState state, Command command, Object result)
+	public void nextState(SessionState state, Commands command, Object result)
 	{
 		try
 		{

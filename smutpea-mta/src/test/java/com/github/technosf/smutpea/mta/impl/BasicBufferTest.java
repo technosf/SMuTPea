@@ -26,7 +26,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import com.github.technosf.smutpea.core.Buffer;
-import com.github.technosf.smutpea.core.rfc2821.Session;
+import com.github.technosf.smutpea.core.SessionIF;
 
 /**
  * Unit test for {@code Buffer}
@@ -276,7 +276,7 @@ public class BasicBufferTest
 
 		assertEquals(classUnderTest.getMailData(), INIT_MAIL);
 		classUnderTest.appendMailData(UNIQUE_VALUE);
-		assertEquals(classUnderTest.getMailData(), INIT_MAIL + Session.CRLF
+		assertEquals(classUnderTest.getMailData(), INIT_MAIL + SessionIF.CRLF
 						+ UNIQUE_VALUE);
 
 		assertEquals(classUnderTest.getForwardPath(), INIT_FORWARD);

@@ -11,20 +11,20 @@
  * specific language governing permissions and limitations under the License.
  */
 
-package com.github.technosf.smutpea.core.rfc2821;
+package com.github.technosf.smutpea.core.impl;
 
-import static com.github.technosf.smutpea.core.rfc2821.Command.parseLine;
 import static java.util.Objects.requireNonNull;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.github.technosf.smutpea.core.Command;
+import com.github.technosf.smutpea.core.Command.CommandLine;
 import com.github.technosf.smutpea.core.MTA;
 import com.github.technosf.smutpea.core.exceptions.MTAException;
 import com.github.technosf.smutpea.core.exceptions.SessionClosedException;
 import com.github.technosf.smutpea.core.exceptions.SessionStateException;
 import com.github.technosf.smutpea.core.exceptions.SmtpLineException;
-import com.github.technosf.smutpea.core.rfc2821.Command.CommandLine;
 
 /**
  * A SMTP session.
@@ -37,14 +37,14 @@ import com.github.technosf.smutpea.core.rfc2821.Command.CommandLine;
  * @since 0.0.1
  * @version 0.0.1
  */
-public final class Session
+public final class Session<C extends Command>
 {
     private static final Logger logger = LoggerFactory.getLogger(Session.class);
 
     /**
      * The SMTP end-of-line signifier, CRLF
      */
-    public final static String CRLF = "\r\n";
+    public static final String CRLF = "\r\n";
 
     /*
      * Constants
@@ -93,7 +93,7 @@ public final class Session
     /**
      * The MTA called by this Session
      */
-    private final MTA mta;
+    private final MTA<C> mta;
 
 
     /**
@@ -107,7 +107,7 @@ public final class Session
      * @throws MTAException
      *             The {@code MTA} was null
      */
-    public Session(final MTA mta) throws MTAException
+    public Session(final MTA<C> mta) throws MTAException
     {
         try
         {
@@ -118,14 +118,14 @@ public final class Session
             throw new MTAException(ERR_MTA_NULL);
         }
 
-        assert (!mta.isClosed());
+        assert(!mta.isClosed());
     }
 
 
     /**
-     * Returns the state table for this {@code Session}
-     * 
-     * @return the state table for this {@code Session}
+     * {@inheritDoc}
+     *
+     * @see com.github.technosf.smutpea.core.SessionIF#getStateTable()
      */
     public StateTable getStateTable()
     {
@@ -134,22 +134,13 @@ public final class Session
 
 
     /**
-     * Process SMTP conversation from the {@code MTA}.
-     * <p>
-     * Takes the client input provided by the {@code MTA} and processes it
-     * according to the {@code SessionState}. This method is synchronized to
-     * ensure that {@code SessionState} is updated atomically.
-     * 
-     * @param line
-     *            the client input provided by the {@code MTA}.
-     * @return the reply to be output by the {@code MTA} to the client.
-     * @throws SmtpLineException
-     *             line was {@literal null} or contained a {@literal CRLF}.
-     * @throws MTAException
-     *             the {@code MTA} could not process the input.
+     * {@inheritDoc}
+     *
+     * @see com.github.technosf.smutpea.core.SessionIF#process(java.lang.String)
      */
-    public final synchronized String process(final String line)
-            throws SmtpLineException, MTAException
+    public final synchronized String process(Class<C> clazz,
+            final String line)
+                    throws SmtpLineException, MTAException
     {
         /*
          * Validate input
@@ -179,7 +170,7 @@ public final class Session
         else
         // In COMMAND State. Process command
         {
-            response = commandStateProcessor(line);
+            response = commandStateProcessor(clazz, line);
         }
 
         return response;
@@ -198,12 +189,15 @@ public final class Session
      * @return the reply to be output by the {@code MTA} to the client.
      * @throws MTAException
      */
-    private final String commandStateProcessor(final String line)
-            throws MTAException
+
+    private final String commandStateProcessor(
+            Class<C> clazz,
+            final String line)
+                    throws MTAException
     {
         logger.debug(CONST_MSG_PROCESS_CMD, line);
 
-        CommandLine commandLine = parseLine(line); // Parse out the command
+        CommandLine<C> commandLine = Command.parseLine(clazz, line); // Parse out the command
 
         SessionState nextState = null;
 

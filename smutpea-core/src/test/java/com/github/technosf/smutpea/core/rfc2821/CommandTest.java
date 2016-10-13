@@ -20,7 +20,8 @@ import static org.testng.Assert.assertTrue;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
-import com.github.technosf.smutpea.core.rfc2821.Command.CommandLine;
+import com.github.technosf.smutpea.core.impl.rfc2821.Commands;
+import com.github.technosf.smutpea.core.impl.rfc2821.Commands.CommandLine;
 
 /**
  * Unit test for {@code Command}
@@ -53,49 +54,49 @@ public class CommandTest
 																"Whitespace input, FAIL", " ", null, false, EMPTY
 												},
 												{
-																"Reset, no params, OK", "rset", Command.RSET,
+																"Reset, no params, OK", "rset", Commands.RSET,
 																true, EMPTY
 												},
 												{
 																"Reset, params, FAIL", "rset some params",
-																Command.RSET, false, EMPTY
+																Commands.RSET, false, EMPTY
 												},
 												{
-																"Hello, no domain, FAIL", "helo", Command.HELO,
+																"Hello, no domain, FAIL", "helo", Commands.HELO,
 																false, EMPTY
 												},
 												{
-																"Hello, no domain, FAIL", "HELO", Command.HELO,
+																"Hello, no domain, FAIL", "HELO", Commands.HELO,
 																false, EMPTY
 												},
 												{
-																"Hello, no domain, FAIL", "Helo", Command.HELO,
+																"Hello, no domain, FAIL", "Helo", Commands.HELO,
 																false, EMPTY
 												},
 												{
 																"Hello, domain, OK", "Helo parameters",
-																Command.HELO, true, new String[]
+																Commands.HELO, true, new String[]
 																	{
 																		"parameters"
 																	}
 												},
 												{
 																"Hello, domain, OK", "Helo <parameters",
-																Command.HELO, true, new String[]
+																Commands.HELO, true, new String[]
 																	{
 																		"<parameters"
 																	}
 												},
 												{
 																"Hello, domain, OK", "Helo parameters>",
-																Command.HELO, true, new String[]
+																Commands.HELO, true, new String[]
 																	{
 																		"parameters>"
 																	}
 												},
 												{
 																"Hello, domain, OK", "Helo <parameters>",
-																Command.HELO, true, new String[]
+																Commands.HELO, true, new String[]
 																	{
 																		"<parameters>"
 																	}
@@ -109,51 +110,51 @@ public class CommandTest
 																null, false, null
 												},
 												{
-																"Data, no params", "data", Command.DATA, true, EMPTY
+																"Data, no params", "data", Commands.DATA, true, EMPTY
 												},
 												{
-																"Data, params, FAIL", "data abc", Command.DATA,
+																"Data, params, FAIL", "data abc", Commands.DATA,
 																false, EMPTY
 												},
 												{
-																"Mail, no params, FAIL", "MAIL", Command.MAIL,
+																"Mail, no params, FAIL", "MAIL", Commands.MAIL,
 																false, EMPTY
 												},
 												{
-																"Mail, param, FAIL", "MAIL abc", Command.MAIL,
+																"Mail, param, FAIL", "MAIL abc", Commands.MAIL,
 																false, EMPTY
 												},
 												{
 																"Mail, param, FAIL", "MAIL <abc>",
-																Command.MAIL, false, EMPTY
+																Commands.MAIL, false, EMPTY
 												},
 												{
 																"Mail, param, FAIL", "MAIL FROM<abc>",
-																Command.MAIL, false, EMPTY
+																Commands.MAIL, false, EMPTY
 												},
 												{
 																"Mail, param, FAIL", "MAIL FROM:abc>",
-																Command.MAIL, false, EMPTY
+																Commands.MAIL, false, EMPTY
 												},
 												{
 																"Mail, param, FAIL", "MAIL FROM: <abc>",
-																Command.MAIL, false, EMPTY
+																Commands.MAIL, false, EMPTY
 												},
 												{
 																"Mail, param, OK", "MAIL FROM:<abc>",
-																Command.MAIL, true, new String[]
+																Commands.MAIL, true, new String[]
 																	{
 																		"abc"
 																	}
 												},
 												{
 																"Mail, params, FAIL", "MAIL <abc> xyz",
-																Command.MAIL,
+																Commands.MAIL,
 																false, EMPTY
 												},
 												{
 																"Mail, params, OK", "MAIL FROM:<abc> <xyz>",
-																Command.MAIL, true,
+																Commands.MAIL, true,
 																new String[]
 																	{
 																					"abc", "xyz"
@@ -161,58 +162,58 @@ public class CommandTest
 												},
 												{
 																"Mail, too many params, FAIL",
-																"MAIL <abc> <xyz> <qwerty>", Command.MAIL,
+																"MAIL <abc> <xyz> <qwerty>", Commands.MAIL,
 																false, EMPTY
 												},
 												{
 																"Unknown command, FAIL", "ELOH", null, false, EMPTY
 												},
 												{
-																"Ehlo, no domain, FAIL", "EHLO", Command.EHLO,
+																"Ehlo, no domain, FAIL", "EHLO", Commands.EHLO,
 																false, EMPTY
 												},
 												{
 																"Ehlo, domain, OK", "EHLO parameters",
-																Command.EHLO, true, new String[]
+																Commands.EHLO, true, new String[]
 																	{
 																		"parameters"
 																	}
 												},
 												{
 																"Ehlo, domain, OK", "EHLO <parameters",
-																Command.EHLO, true, new String[]
+																Commands.EHLO, true, new String[]
 																	{
 																		"<parameters"
 																	}
 												},
 												{
 																"Ehlo, domain, OK", "EHLO parameters>",
-																Command.EHLO, true, new String[]
+																Commands.EHLO, true, new String[]
 																	{
 																		"parameters>"
 																	}
 												},
 												{
 																"Ehlo, domain, OK", "EHLO <parameters>",
-																Command.EHLO, true, new String[]
+																Commands.EHLO, true, new String[]
 																	{
 																		"<parameters>"
 																	}
 												},
 												{
-																"Verify, no param, FAIL", "vrfy", Command.VRFY,
+																"Verify, no param, FAIL", "vrfy", Commands.VRFY,
 																false, EMPTY
 												},
 												{
 																"Verify, param, OK", "vrfy dasdada",
-																Command.VRFY, true, new String[]
+																Commands.VRFY, true, new String[]
 																	{
 																		"dasdada"
 																	}
 												},
 												{
 																"Verify, too many params, FAIL",
-																"vrfy abc xyz", Command.VRFY, false, EMPTY
+																"vrfy abc xyz", Commands.VRFY, false, EMPTY
 												},
 												{
 																"Unknown command, FAIL", "non rcpt", null,
@@ -224,79 +225,79 @@ public class CommandTest
 												},
 												{
 																"Receipt, no params, FAIL", "rcpt",
-																Command.RCPT, false, EMPTY
+																Commands.RCPT, false, EMPTY
 												},
 												{
 																"Receipt, param, FAIL", "rcpt abc",
-																Command.RCPT, false, EMPTY
+																Commands.RCPT, false, EMPTY
 												},
 												{
 																"Receipt, param, FAIL", "rcpt <abc>",
-																Command.RCPT, false, EMPTY
+																Commands.RCPT, false, EMPTY
 												},
 												{
 																"Receipt, param, FAIL", "rcpt to<abc>",
-																Command.RCPT, false, EMPTY
+																Commands.RCPT, false, EMPTY
 												},
 												{
 																"Receipt, param, FAIL", "rcpt to:abc>",
-																Command.RCPT, false, EMPTY
+																Commands.RCPT, false, EMPTY
 												},
 												{
 																"Receipt, param, FAIL", "rcpt to: <abc>",
-																Command.RCPT, false, EMPTY
+																Commands.RCPT, false, EMPTY
 												},
 												{
 																"Receipt, param, OK", "Rcpt to:<abc>",
-																Command.RCPT, true, new String[]
+																Commands.RCPT, true, new String[]
 																	{
 																		"abc"
 																	}
 												},
 												{
 																"Receipt, params, FAIL", "rcpt <abc> xyz",
-																Command.RCPT, false, EMPTY
+																Commands.RCPT, false, EMPTY
 												},
 												{
 																"Receipt, params, OK", "RCPT TO:<abc> <xyz>",
-																Command.RCPT, true, new String[]
+																Commands.RCPT, true, new String[]
 																	{
 																					"abc", "xyz"
 																	}
 												},
 												{
 																"Receipt, too many params, FAIL",
-																"rcpt <abc> <xyz> <qwerty>", Command.RCPT,
+																"rcpt <abc> <xyz> <qwerty>", Commands.RCPT,
 																false, EMPTY
 												},
 												{
-																"Expand, no param, FAIL", "Expn", Command.EXPN,
+																"Expand, no param, FAIL", "Expn", Commands.EXPN,
 																false, EMPTY
 												},
 												{
 																"Expand, param, OK", "Expn dasdada",
-																Command.EXPN, true, new String[]
+																Commands.EXPN, true, new String[]
 																	{
 																		"dasdada"
 																	}
 												},
 												{
 																"Expand, too many params, FAIL",
-																"Expn abc xyz", Command.EXPN, false, EMPTY
+																"Expn abc xyz", Commands.EXPN, false, EMPTY
 												},
 												{
 																"Unknown comand, FAIL", "help!", null, false, null
 												},
 												{
-																"Help, no params, OK", "HELP", Command.HELP,
+																"Help, no params, OK", "HELP", Commands.HELP,
 																true, EMPTY
 												},
 												{
-																"Help, no params, OK", "help", Command.HELP,
+																"Help, no params, OK", "help", Commands.HELP,
 																true, EMPTY
 												},
 												{
-																"Help, params, OK", "help !", Command.HELP,
+																"Help, params, OK", "help !", Commands.HELP,
 																true, new String[]
 																	{
 																		"!"
@@ -304,14 +305,14 @@ public class CommandTest
 												},
 												{
 																"Help, too many params, FAIL", "help one two",
-																Command.HELP, false, EMPTY
+																Commands.HELP, false, EMPTY
 												},
 												{
-																"No Op, no params, OK", "noop", Command.NOOP,
+																"No Op, no params, OK", "noop", Commands.NOOP,
 																true, EMPTY
 												},
 												{
-																"No Op, params, OK", "noop abc", Command.NOOP,
+																"No Op, params, OK", "noop abc", Commands.NOOP,
 																true, new String[]
 																	{
 																		"abc"
@@ -319,20 +320,20 @@ public class CommandTest
 												},
 												{
 																"No Op, too many params, FAIL", "noop abc xyz",
-																Command.NOOP, false, EMPTY
+																Commands.NOOP, false, EMPTY
 												},
 												{
 																"Unknown comand, FAIL", "quite", null, false, EMPTY
 												},
 												{
 																"Quit, too many params, FAIL", "quit xyz",
-																Command.QUIT, false, EMPTY
+																Commands.QUIT, false, EMPTY
 												},
 												{
-																"Quit, OK", "quit", Command.QUIT, true, EMPTY
+																"Quit, OK", "quit", Commands.QUIT, true, EMPTY
 												},
 												{
-																"Quit, OK", "QUIT", Command.QUIT, true, EMPTY
+																"Quit, OK", "QUIT", Commands.QUIT, true, EMPTY
 												}
 						};
 
@@ -343,10 +344,10 @@ public class CommandTest
 
 	@Test(dataProvider = "commands")
 	public void testParseCommand(String description, String testCommand,
-					Command result, boolean validity, String[] parameters)
+					Commands result, boolean validity, String[] parameters)
 	{
 
-		CommandLine processedCommand = Command.parseLine(testCommand);
+		CommandLine processedCommand = Commands.parseLine(testCommand);
 
 		if (result == null)
 		{
@@ -367,9 +368,9 @@ public class CommandTest
 	@Test
 	public void testValidateResponse()
 	{
-		for (Command command : Command.values())
+		for (Commands command : Commands.values())
 		{
-			for (ReplyCode responseCode : ReplyCode.values())
+			for (ReplyCodeRFC2821 responseCode : ReplyCodeRFC2821.values())
 			{
 				assertEquals(
 								command.validateReplyCode(responseCode),
@@ -385,7 +386,7 @@ public class CommandTest
 	@Test
 	public void testToString()
 	{
-		for (Command command : Command.values())
+		for (Commands command : Commands.values())
 		{
 			assertTrue(!command.toString().isEmpty(), command.name());
 		}

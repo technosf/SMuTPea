@@ -11,13 +11,34 @@
  * specific language governing permissions and limitations under the License.
  */
 
+package com.github.technosf.smutpea.core.impl;
+
 /**
- * SMTP objects, constraints and dialogues as defined by RFC2821
+ * SMTP conversation session states
+ * <p>
+ * {@code SessionState} is a synthesis of <em>The SMTP Procedures</em>
  * 
- * @see http://tools.ietf.org/html/rfc2821
+ * @see http://tools.ietf.org/html/rfc2821#section-3
  * 
  * @author technosf
  * @since 0.0.1
  * @version 0.0.1
  */
-package com.github.technosf.smutpea.core.rfc2821;
+public enum SessionState
+	{
+		/** CONNECT state: waiting for a Hello. */
+		CONNECT,
+
+		/** COMMAND state: waiting for a command. */
+		COMMAND,
+
+		/** RCPT state: waiting for a RCPT &lt;email address&gt; command. */
+		RCPT,
+
+		/** Waiting for data. */
+		DATA,
+
+		/** End of client transmission. */
+		CLOSED;
+
+	}

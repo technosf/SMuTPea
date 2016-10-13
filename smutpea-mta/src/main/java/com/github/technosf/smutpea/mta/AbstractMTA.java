@@ -18,14 +18,15 @@ import java.util.Date;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.github.technosf.smutpea.core.Command;
+import com.github.technosf.smutpea.core.Command.CommandLine;
 import com.github.technosf.smutpea.core.MTA;
+import com.github.technosf.smutpea.core.ReplyCode;
 import com.github.technosf.smutpea.core.exceptions.MTAException;
 import com.github.technosf.smutpea.core.exceptions.SessionStateException;
 import com.github.technosf.smutpea.core.exceptions.SmtpLineException;
-import com.github.technosf.smutpea.core.rfc2821.Command.CommandLine;
-import com.github.technosf.smutpea.core.rfc2821.ReplyCode;
-import com.github.technosf.smutpea.core.rfc2821.Session;
-import com.github.technosf.smutpea.core.rfc2821.SessionState;
+import com.github.technosf.smutpea.core.impl.Session;
+import com.github.technosf.smutpea.core.impl.SessionState;
 
 /**
  * An Abstract {@code MTA}
@@ -42,7 +43,8 @@ import com.github.technosf.smutpea.core.rfc2821.SessionState;
  * @since 0.0.1
  * @version 0.0.1
  */
-public abstract class AbstractMTA implements MTA
+public abstract class AbstractMTA<C extends Command>
+        implements MTA<C>
 {
     private static final Logger logger = LoggerFactory
             .getLogger(AbstractMTA.class);
@@ -75,7 +77,10 @@ public abstract class AbstractMTA implements MTA
     /**
      * The Session this MTA wraps
      */
-    protected final Session session;
+    protected final Session<C> session;
+
+    protected final ReplyCode connectCode;
+    protected final ReplyCode syntaxErrorCode;
 
     /**
      * The current/last response
@@ -85,7 +90,7 @@ public abstract class AbstractMTA implements MTA
     /**
      * The current/last Reply Code
      */
-    private ReplyCode replyCode;// = ReplyCode._220;
+    private ReplyCode replyCode;
 
 
     /**
@@ -95,15 +100,22 @@ public abstract class AbstractMTA implements MTA
      *            The MTA name
      * @param mtaDomain
      *            The domain the MTA is answering for
+     * @param connectCode
+     *            the reply code for successful connection requests
+     * @param syntaxErrorCode
+     *            the reply code for command syntax errors
      * @throws MTAException
      *             Session creation failed.
      */
-    protected AbstractMTA(final String mtaName, final String mtaDomain)
-            throws MTAException
+    protected AbstractMTA(final String mtaName, final String mtaDomain,
+            ReplyCode connectCode, ReplyCode syntaxErrorCode)
+                    throws MTAException
     {
         this.mtaName = mtaName;
         this.mtaDomain = mtaDomain;
-        this.session = new Session(this);
+        this.session = new Session<C>(this);
+        this.connectCode = connectCode;
+        this.syntaxErrorCode = syntaxErrorCode;
     }
 
 
@@ -125,8 +137,9 @@ public abstract class AbstractMTA implements MTA
      *            the {@code CommandLine} to process
      * @throws MTAException
      */
-    protected abstract void processValidCommand(final CommandLine commandLine)
-            throws MTAException;
+    protected abstract void processValidCommand(
+            final CommandLine<C> commandLine)
+                    throws MTAException;
 
 
     /**
@@ -139,8 +152,9 @@ public abstract class AbstractMTA implements MTA
      *            the invalid {@code CommandLine} to process
      * @throws MTAException
      */
-    protected abstract void processInvalidCommand(final CommandLine commandLine)
-            throws MTAException;
+    protected abstract void processInvalidCommand(
+            final CommandLine<C> commandLine)
+                    throws MTAException;
 
 
     /**
@@ -180,7 +194,8 @@ public abstract class AbstractMTA implements MTA
      * @param response
      *            the response
      */
-    protected final void setResponse(ReplyCode replyCode, String response)
+    protected final void setResponse(ReplyCode replyCode,
+            String response)
     {
         this.replyCode = replyCode;
         this.response = response;
@@ -217,10 +232,13 @@ public abstract class AbstractMTA implements MTA
     @Override
     public final void connect()
     {
-        setResponse(ReplyCode._220, String.format(CONST_FMT_CMD_RESPONSE,
-                ReplyCode._220.getCode(),
+        setResponse(connectCode, String.format(CONST_FMT_CMD_RESPONSE,
+                connectCode.getCode(),
                 getMTADomain(), getMTAName(), getMTADateTime()));
     }
+
+
+    protected abstract Class<C> getCommandClass();
 
 
     /**
@@ -229,6 +247,7 @@ public abstract class AbstractMTA implements MTA
      * @throws MTAException
      * @see com.github.technosf.smutpea.core.MTA#processLine(java.lang.String)
      */
+    @SuppressWarnings("unchecked")
     @Override
     public final void processLine(String line) throws MTAException
     {
@@ -236,17 +255,21 @@ public abstract class AbstractMTA implements MTA
 
         try
         {
-            setResponseDescription(session.process(line));
+            setResponseDescription(session.process(getCommandClass(), line));
         }
         catch (MTAException e)
-        // Could not process the line
+        /*
+         *  Could not process the line
+         */
         {
             if (e.getCommandLine() == null)
-            // No command found
+            /*
+             *  No command found
+             */
             {
                 logger.debug(CONST_MSG_NO_CMD);
 
-                setResponse(ReplyCode._500); // Syntax error, command unrecognized
+                setResponse(syntaxErrorCode); // Syntax error, command unrecognized
 
                 return;
             }
@@ -261,12 +284,14 @@ public abstract class AbstractMTA implements MTA
                         session.getStateTable().getState(),
                         e.getCommandLine());
 
-                processInvalidCommand(e.getCommandLine());
+                processInvalidCommand((CommandLine<C>) e.getCommandLine());
 
                 return;
             }
             else
-            // Not a well defined MTA exception, so propagate it up
+            /*
+             * Not a well defined MTA exception, so propagate it up
+             */
             {
                 logger.debug(CONST_MSG_UNKNOWN_ERR, e.getMessage());
                 throw e;
@@ -275,7 +300,6 @@ public abstract class AbstractMTA implements MTA
         catch (SmtpLineException e)
         {
             logger.debug(e.getMessage());
-            // TODO Auto-generated catch block
         }
     } // public final void processLine(String line) throws MTAException
 
@@ -296,10 +320,10 @@ public abstract class AbstractMTA implements MTA
     /**
      * {@inheritDoc}
      * 
-     * @see com.github.technosf.smutpea.core.MTA#command(com.github.technosf.smutpea.core.rfc2821.Command.CommandLine)
+     * @see com.github.technosf.smutpea.core.MTA#command(com.github.technosf.smutpea.core.impl.rfc2821.Commands.CommandLine)
      */
     @Override
-    public final void command(final CommandLine commandLine)
+    public final void command(final CommandLine<C> commandLine)
             throws MTAException
     {
         if (commandLine.isValid())

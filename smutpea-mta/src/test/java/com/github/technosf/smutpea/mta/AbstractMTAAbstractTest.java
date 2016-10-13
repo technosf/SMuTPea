@@ -22,7 +22,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import com.github.technosf.smutpea.core.exceptions.MTAException;
-import com.github.technosf.smutpea.core.rfc2821.ReplyCode;
+import com.github.technosf.smutpea.core.impl.rfc2821.ReplyCodeRFC2821;
 
 /**
  * AbstractMTAAbstractTest
@@ -63,7 +63,7 @@ public abstract class AbstractMTAAbstractTest
 	{
 		mta.connect();
 		assertEquals(mta.getResponse().substring(0, 4), "220 ", "Unexpected response code for connect");
-		assertSame(mta.getReplyCode(), ReplyCode._220);
+		assertSame(mta.getReplyCode(), ReplyCodeRFC2821._220);
 	}
 
 

@@ -19,7 +19,7 @@ import static org.testng.Assert.assertNull;
 
 import org.testng.annotations.Test;
 
-import com.github.technosf.smutpea.core.rfc2821.Command.CommandLine;
+import com.github.technosf.smutpea.core.impl.rfc2821.Commands.CommandLine;
 
 /**
  * Unit test for {@code MTAException}

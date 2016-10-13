@@ -13,9 +13,8 @@
 
 package com.github.technosf.smutpea.core;
 
+import com.github.technosf.smutpea.core.Command.CommandLine;
 import com.github.technosf.smutpea.core.exceptions.MTAException;
-import com.github.technosf.smutpea.core.rfc2821.Command.CommandLine;
-import com.github.technosf.smutpea.core.rfc2821.ReplyCode;
 
 /**
  * <em>Message Transfer Agent</em> per RFC2821 section 2.3.3
@@ -29,7 +28,7 @@ import com.github.technosf.smutpea.core.rfc2821.ReplyCode;
  * @since 0.0.1
  * @version 0.0.1
  */
-public interface MTA
+public interface MTA<C extends Command>
 {
 
     /*
@@ -76,7 +75,7 @@ public interface MTA
      * @throws MTAException
      *             The MTA implementation experienced an exception.
      */
-    void command(final CommandLine commandLine)
+    void command(final CommandLine<C> commandLine)
             throws MTAException;
 
 

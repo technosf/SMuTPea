@@ -30,9 +30,13 @@ import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import com.github.technosf.smutpea.core.MTA;
+import com.github.technosf.smutpea.core.SessionIF;
 import com.github.technosf.smutpea.core.exceptions.MTAException;
 import com.github.technosf.smutpea.core.exceptions.SmtpLineException;
-import com.github.technosf.smutpea.core.rfc2821.Command.CommandLine;
+import com.github.technosf.smutpea.core.impl.StateTable;
+import com.github.technosf.smutpea.core.impl.rfc2821.Commands;
+import com.github.technosf.smutpea.core.impl.rfc2821.Commands.CommandLine;
+import com.github.technosf.smutpea.mta.impl.Session;
 
 /**
  * Unit test for {@code Session}
@@ -47,7 +51,7 @@ public class SessionTest
 
 	private final MTA mta = createNiceMock(MTA.class);
 
-	private Session classUnderTest = null;
+	private SessionIF classUnderTest = null;
 
 
 	@BeforeMethod
@@ -70,63 +74,63 @@ public class SessionTest
 	private static Object[][] CMD_QUIT_221 = new Object[][]
 		{
 						{
-										new CommandLine(Command.QUIT, false,
+										new CommandLine(Commands.QUIT, false,
 														new String[] {}),
-										ReplyCode._221, "Quit", "QUIT"
+										ReplyCodeRFC2821._221, "Quit", "QUIT"
 			}
 	};
 
 	private static Object[][] CMD_QUIT_450 = new Object[][]
 		{
 						{
-										new CommandLine(Command.QUIT, false,
+										new CommandLine(Commands.QUIT, false,
 														new String[] {}),
-										ReplyCode._450, "Quit", "QUIT"
+										ReplyCodeRFC2821._450, "Quit", "QUIT"
 			}
 	};
 
 	private static Object[][] CMD_DATA_221 = new Object[][]
 		{
 						{
-										new CommandLine(Command.DATA, false,
+										new CommandLine(Commands.DATA, false,
 														new String[] {}),
-										ReplyCode._221, "Data", "DATA"
+										ReplyCodeRFC2821._221, "Data", "DATA"
 			}
 	};
 
 	private static Object[][] CMD_DATA_503 = new Object[][]
 		{
 						{
-										new CommandLine(Command.DATA, false,
+										new CommandLine(Commands.DATA, false,
 														new String[] {}),
-										ReplyCode._503, "Data", "DATA"
+										ReplyCodeRFC2821._503, "Data", "DATA"
 			}
 	};
 
 	private static Object[][] CMD_MAIL_250 = new Object[][]
 		{
 						{
-										new CommandLine(Command.MAIL, false,
+										new CommandLine(Commands.MAIL, false,
 														new String[] {}),
-										ReplyCode._250, "Mail", "MAIL FROM:<userx@y.foo.org>"
+										ReplyCodeRFC2821._250, "Mail", "MAIL FROM:<userx@y.foo.org>"
 			}
 	};
 
 	private static Object[][] CMD_MAIL_503 = new Object[][]
 		{
 						{
-										new CommandLine(Command.MAIL, false,
+										new CommandLine(Commands.MAIL, false,
 														new String[] {}),
-										ReplyCode._503, "Mail", "MAIL FROM:<userx@y.foo.org>"
+										ReplyCodeRFC2821._503, "Mail", "MAIL FROM:<userx@y.foo.org>"
 			}
 	};
 
 	private static Object[][] CMD_RCPT_250 = new Object[][]
 		{
 						{
-										new CommandLine(Command.RCPT, false,
+										new CommandLine(Commands.RCPT, false,
 														new String[] {}),
-										ReplyCode._250, "Rcpt",
+										ReplyCodeRFC2821._250, "Rcpt",
 										"RCPT TO:<@hosta.int,@jkl.org:userc@d.bar.org>"
 			}
 	};
@@ -134,9 +138,9 @@ public class SessionTest
 	private static Object[][] CMD_RCPT_503 = new Object[][]
 		{
 						{
-										new CommandLine(Command.RCPT, false,
+										new CommandLine(Commands.RCPT, false,
 														new String[] {}),
-										ReplyCode._503, "Rcpt",
+										ReplyCodeRFC2821._503, "Rcpt",
 										"RCPT TO:<@hosta.int,@jkl.org:userc@d.bar.org>"
 			}
 	};
@@ -144,9 +148,9 @@ public class SessionTest
 	private static Object[][] CMD_EHLO_250 = new Object[][]
 		{
 						{
-										new CommandLine(Command.EHLO, false,
+										new CommandLine(Commands.EHLO, false,
 														new String[] {}),
-										ReplyCode._250, "Ehlo", "EHLO bar.com"
+										ReplyCodeRFC2821._250, "Ehlo", "EHLO bar.com"
 			}
 	};
 
@@ -154,9 +158,9 @@ public class SessionTest
 					new Object[][]
 						{
 										{
-														new CommandLine(Command.EHLO, false,
+														new CommandLine(Commands.EHLO, false,
 																		new String[] {}),
-														ReplyCode._500, "Ehlo command too long",
+														ReplyCodeRFC2821._500, "Ehlo command too long",
 														"EHLO too.long.domain.com"
 							}
 					};
@@ -164,63 +168,63 @@ public class SessionTest
 	private static Object[][] CMD_EHLO_501 = new Object[][]
 		{
 						{
-										new CommandLine(Command.EHLO, false,
+										new CommandLine(Commands.EHLO, false,
 														new String[] {}),
-										ReplyCode._501, "Ehlo, invalid domain name", "EHLO"
+										ReplyCodeRFC2821._501, "Ehlo, invalid domain name", "EHLO"
 			}
 	};
 
 	private static Object[][] CMD_EHLO_502 = new Object[][]
 		{
 						{
-										new CommandLine(Command.EHLO, false,
+										new CommandLine(Commands.EHLO, false,
 														new String[] {}),
-										ReplyCode._502, "Ehlo recognized, but not implemented", "EHLO"
+										ReplyCodeRFC2821._502, "Ehlo recognized, but not implemented", "EHLO"
 			}
 	};
 
 	private static Object[][] CMD_EHLO_504 = new Object[][]
 		{
 						{
-										new CommandLine(Command.EHLO, false,
+										new CommandLine(Commands.EHLO, false,
 														new String[] {}),
-										ReplyCode._504, "Ehlo", "EHLO notafqdn"
+										ReplyCodeRFC2821._504, "Ehlo", "EHLO notafqdn"
 			}
 	};
 
 	private static Object[][] CMD_EHLO_550 = new Object[][]
 		{
 						{
-										new CommandLine(Command.EHLO, false,
+										new CommandLine(Commands.EHLO, false,
 														new String[] {}),
-										ReplyCode._550, "Ehlo failure", "EHLO"
+										ReplyCodeRFC2821._550, "Ehlo failure", "EHLO"
 			}
 	};
 
 	private static Object[][] CMD_RSET_250 = new Object[][]
 		{
 						{
-										new CommandLine(Command.RSET, false,
+										new CommandLine(Commands.RSET, false,
 														new String[] {}),
-										ReplyCode._250, "Rset", "RSET"
+										ReplyCodeRFC2821._250, "Rset", "RSET"
 			}
 	};
 
 	private static Object[][] CMD_RSET_501 = new Object[][]
 		{
 						{
-										new CommandLine(Command.RSET, false,
+										new CommandLine(Commands.RSET, false,
 														new String[] {}),
-										ReplyCode._503, "Rset unexpected argument data", "RSET params"
+										ReplyCodeRFC2821._503, "Rset unexpected argument data", "RSET params"
 			}
 	};
 
 	private static Object[][] CMD_RSET_503 = new Object[][]
 		{
 						{
-										new CommandLine(Command.RSET, false,
+										new CommandLine(Commands.RSET, false,
 														new String[] {}),
-										ReplyCode._503, "Rset invalid response code", "RSET"
+										ReplyCodeRFC2821._503, "Rset invalid response code", "RSET"
 			}
 	};
 
@@ -392,7 +396,7 @@ public class SessionTest
 	{
 		try
 		{
-			classUnderTest.process(Session.CRLF);
+			classUnderTest.process(SessionIF.CRLF);
 			fail("Expected MTAException not thrown for CRLF input.");
 		}
 		catch (MTAException e)
@@ -406,7 +410,7 @@ public class SessionTest
 
 		try
 		{
-			classUnderTest.process("abc" + Session.CRLF + "xyz");
+			classUnderTest.process("abc" + SessionIF.CRLF + "xyz");
 			fail("Expected MTAException not thrown for CRLF input.");
 		}
 		catch (MTAException e)
@@ -450,7 +454,7 @@ public class SessionTest
 			}
 
 			expect(mta.getReplyCode())
-							.andReturn((ReplyCode) conversation[i][1])
+							.andReturn((ReplyCodeRFC2821) conversation[i][1])
 							.anyTimes();
 
 			replay(mta);

@@ -25,6 +25,8 @@ import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import com.github.technosf.smutpea.core.exceptions.SessionStateException;
+import com.github.technosf.smutpea.core.impl.SessionState;
+import com.github.technosf.smutpea.core.impl.StateTable;
 
 /**
  * Unit test for {@code StateTable}
