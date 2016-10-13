@@ -209,9 +209,9 @@ public abstract class AbstractServer
                 logger.warn(CONST_ERR_IO_CLOSED);
                 break;
             }
-            catch (IOException e1)
+            catch (IOException e)
             {
-                logger.error(CONST_ERR_IO_READ, e1);
+                logger.error(CONST_ERR_IO_READ, e);
                 break;
             }
         } // while (!mta.isClosed())
