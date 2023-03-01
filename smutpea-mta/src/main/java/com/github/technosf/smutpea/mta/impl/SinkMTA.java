@@ -41,7 +41,7 @@ import com.github.technosf.smutpea.mta.AbstractMTA;
  */
 public final class SinkMTA
         extends AbstractMTA
-        implements MTA
+  //      implements MTA
 {
     private static final Logger logger = LoggerFactory.getLogger(SinkMTA.class);
 

@@ -41,7 +41,7 @@ public final class StateMachine
     /**
      * Valid state transition definition
      */
-    @SuppressWarnings("serial")
+    //@SuppressWarnings("serial")
     static final Map<Map.Entry<SessionState, Command>, SessionState> STATE_TRANSITIONS =
             new HashMap<Map.Entry<SessionState, Command>, SessionState>()
             {

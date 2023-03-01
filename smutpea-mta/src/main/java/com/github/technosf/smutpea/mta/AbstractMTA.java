@@ -275,7 +275,6 @@ public abstract class AbstractMTA implements MTA
         catch (SmtpLineException e)
         {
             logger.debug(e.getMessage());
-            // TODO Auto-generated catch block
         }
     } // public final void processLine(String line) throws MTAException
 
