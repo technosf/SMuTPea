@@ -11,7 +11,7 @@
  * specific language governing permissions and limitations under the License.
  */
 
-package com.github.technosf.smutpea.core.rfc2821;
+package com.github.technosf.smutpea.core.rfc;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -31,83 +31,170 @@ import org.slf4j.LoggerFactory;
  * @see http://tools.ietf.org/html/rfc2821#section-4.1.1
  * @author technosf
  * @since 0.0.1
- * @version 0.0.1
+ * @version 0.0.5
  */
 public enum Command {
 
-    //
+    /*
+     * CONNECTION ESTABLISHMENT
+
+         S: 220
+         E: 554
+
+     */
+    CONNECT("Implicit: Connection Opened", "", new ReplyCode[] {
+            ReplyCode._421, ReplyCode._500, ReplyCode._501,
+            ReplyCode._220, 
+            ReplyCode._554, 
+            ReplyCode._521
+    }),
+
+   /*
+    * EHLO or HELO
+
+         S: 250
+         E: 504 (a conforming implementation could return this code only
+         in fairly obscure cases), 550, 502 (permitted only with an old-
+         style server that does not support EHLO)
+    */
     EHLO("EHLO SP Domain", "EHLO (\\S*)$", new ReplyCode[] {
-            ReplyCode._250, ReplyCode._421, ReplyCode._500, ReplyCode._501,
-            ReplyCode._502, ReplyCode._503, ReplyCode._504, ReplyCode._550,
-            ReplyCode._554
+            ReplyCode._421, ReplyCode._500, ReplyCode._501,
+            ReplyCode._250, 
+            ReplyCode._504, 
+            ReplyCode._521
     }),
 
-    //
+    /*
+     * EHLO or HELO
+
+         S: 250
+         E: 504 (a conforming implementation could return this code only
+         in fairly obscure cases), 550, 502 (permitted only with an old-
+         style server that does not support EHLO)
+     */
     HELO("HELO SP Domain", "HELO (\\S*)$", new ReplyCode[] {
-            ReplyCode._250, ReplyCode._421, ReplyCode._500, ReplyCode._501,
-            ReplyCode._502, ReplyCode._503, ReplyCode._504, ReplyCode._554
+            ReplyCode._421, ReplyCode._500, ReplyCode._501,
+            ReplyCode._250, 
+            ReplyCode._502, ReplyCode._550, 
+            ReplyCode._521
     }),
 
-    //
+    /*
+     * MAIL
+
+         S: 250
+         E: 552, 451, 452, 550, 553, 503, 455, 555
+     */
     MAIL("MAIL FROM:<reverse-path> [SP <mail-parameters> ]",
             "MAIL FROM:<(\\S*)>(?: <(\\S*)>)?$",
             new ReplyCode[] {
-                    ReplyCode._250, ReplyCode._421, ReplyCode._451,
-                    ReplyCode._452,
-                    ReplyCode._503, ReplyCode._550,
-                    ReplyCode._552, ReplyCode._553
+                ReplyCode._421, ReplyCode._500, ReplyCode._501,
+                ReplyCode._250, 
+                ReplyCode._451, ReplyCode._452, ReplyCode._455,
+                ReplyCode._503, ReplyCode._550,
+                ReplyCode._552, ReplyCode._553, ReplyCode._555
             }),
 
-    //
+    /*
+     * RCPT
+
+         S: 250, 251 (but see Section 3.4 for discussion of 251 and 551)
+         E: 550, 551, 552, 553, 450, 451, 452, 503, 455, 555
+     */
     RCPT("RCPT TO:<forward-path> [SP <rcpt-parameters> ]",
             "RCPT TO:<(\\S*)>(?: <(\\S*)>)?$", new ReplyCode[] {
-                    ReplyCode._250, ReplyCode._251, ReplyCode._421,
-                    ReplyCode._450,
-                    ReplyCode._451, ReplyCode._452,
-                    ReplyCode._503, ReplyCode._550, ReplyCode._552,
-                    ReplyCode._553
+            ReplyCode._421, ReplyCode._500, ReplyCode._501,
+                    ReplyCode._250, ReplyCode._251, 
+                    ReplyCode._450, ReplyCode._451, ReplyCode._452, ReplyCode._455,
+                    ReplyCode._503, 
+                    ReplyCode._550, ReplyCode._551, ReplyCode._552, ReplyCode._553, 
+                    ReplyCode._555, ReplyCode._556
             }),
 
-    //
+    /*
+     * DATA
+
+         I: 354 -> data -> S: 250
+
+                           E: 552, 554, 451, 452
+
+                           E: 450, 550 (rejections for policy reasons)
+
+         E: 503, 554
+     */
     DATA("DATA", "DATA$", new ReplyCode[] {
-            ReplyCode._354, ReplyCode._421, ReplyCode._451, ReplyCode._452,
-            ReplyCode._501, ReplyCode._503, ReplyCode._552,
-            ReplyCode._554
+            ReplyCode._421, ReplyCode._500, ReplyCode._501,
+            ReplyCode._354, 
+            ReplyCode._451, ReplyCode._452,
+            ReplyCode._503, ReplyCode._552, ReplyCode._554
     }),
 
-    //
+    /*
+     * RSET
+
+         S: 250
+     */
     RSET("RSET", "RSET$", new ReplyCode[] {
-            ReplyCode._250, ReplyCode._421, ReplyCode._501
+            ReplyCode._421, ReplyCode._500, ReplyCode._501,
+            ReplyCode._250
     }),
 
-    //
+    /*
+     * VRFY
+
+         S: 250, 251, 252
+         E: 550, 551, 553, 502, 504
+     */
     VRFY("VRFY SP String", "VRFY (\\S*)$", new ReplyCode[] {
-            ReplyCode._250, ReplyCode._421, ReplyCode._502, ReplyCode._504,
-            ReplyCode._550, ReplyCode._551,
-            ReplyCode._553
+            ReplyCode._421, ReplyCode._500, ReplyCode._501,
+            ReplyCode._250, ReplyCode._251, ReplyCode._252, 
+            ReplyCode._502, ReplyCode._504,
+            ReplyCode._550, ReplyCode._551, ReplyCode._553
     }),
 
-    //
+    /*
+     * EXPN
+
+         S: 250, 252
+         E: 550, 500, 502, 504
+     */
     EXPN("EXPN SP String", "EXPN (\\S*)$", new ReplyCode[] {
-            ReplyCode._250, ReplyCode._252, ReplyCode._421, ReplyCode._500,
-            ReplyCode._502, ReplyCode._503,
+            ReplyCode._421, ReplyCode._500, ReplyCode._501,
+            ReplyCode._250, ReplyCode._252, 
+            ReplyCode._500, ReplyCode._502,
             ReplyCode._504, ReplyCode._550
     }),
 
-    //
+    /*
+     * HELP
+
+         S: 211, 214
+         E: 502, 504
+     */
     HELP("HELP [SP String]", "HELP(?: (\\S*))?$", new ReplyCode[] {
-            ReplyCode._211, ReplyCode._214, ReplyCode._502,
-            ReplyCode._503, ReplyCode._504
+            ReplyCode._421, ReplyCode._500, ReplyCode._501,
+            ReplyCode._211, ReplyCode._214, 
+            ReplyCode._502, ReplyCode._504
     }),
 
-    //
+    /*
+     * NOOP
+
+         S: 250
+     */
     NOOP("NOOP [SP String]", "NOOP(?: (\\S*))?$", new ReplyCode[] {
-            ReplyCode._250, ReplyCode._421, ReplyCode._503
+            ReplyCode._421, ReplyCode._500, ReplyCode._501,
+            ReplyCode._250
     }),
 
-    //
+    /*
+     * QUIT
+
+         S: 221
+     */
     QUIT("Quit", "QUIT$", new ReplyCode[] {
-            ReplyCode._221, ReplyCode._421, ReplyCode._501, ReplyCode._503
+            ReplyCode._421, ReplyCode._500, ReplyCode._501,
+            ReplyCode._221
     });
 
     private static final Logger logger = LoggerFactory.getLogger(Command.class);

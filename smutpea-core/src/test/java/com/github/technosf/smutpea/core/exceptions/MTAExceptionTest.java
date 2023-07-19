@@ -19,14 +19,14 @@ import static org.testng.Assert.assertNull;
 
 import org.testng.annotations.Test;
 
-import com.github.technosf.smutpea.core.rfc2821.Command.CommandLine;
+import com.github.technosf.smutpea.core.rfc.Command.CommandLine;
 
 /**
  * Unit test for {@code MTAException}
  * 
  * @author technosf
  * @since 0.0.1
- * @version 0.0.1
+ * @version 0.0.5
  * 
  */
 public class MTAExceptionTest

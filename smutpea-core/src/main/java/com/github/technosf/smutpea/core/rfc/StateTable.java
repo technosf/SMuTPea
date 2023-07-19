@@ -11,7 +11,7 @@
  * specific language governing permissions and limitations under the License.
  */
 
-package com.github.technosf.smutpea.core.rfc2821;
+package com.github.technosf.smutpea.core.rfc;
 
 import static java.util.Objects.requireNonNull;
 
@@ -38,14 +38,14 @@ public final class StateTable
 	/**
 	 * The history of the state table, including current SessionState.
 	 */
-	@SuppressWarnings("serial")
-	private final LinkedList<SessionState>	stateHistory				=
-																				new LinkedList<SessionState>()
-																					{
-																						{
-																							add(SessionState.CONNECT);
-																						}
-																					};
+	//@SuppressWarnings("serial")
+	private final LinkedList<SessionState>	stateHistory =
+		new LinkedList<SessionState>()
+			{
+				{
+					add(SessionState.CONNECT);
+				}
+			};
 
 
 	/**

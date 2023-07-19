@@ -11,49 +11,34 @@
  * specific language governing permissions and limitations under the License.
  */
 
-package com.github.technosf.smutpea.core.rfc2821;
-
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertTrue;
-
-import org.testng.annotations.Test;
+package com.github.technosf.smutpea.core.rfc;
 
 /**
- * Unit test for {@code ReplyCode}
+ * SMTP conversation session states
+ * <p>
+ * {@code SessionState} is a synthesis of <em>The SMTP Procedures</em>
+ * 
+ * @see http://tools.ietf.org/html/rfc2821#section-3
  * 
  * @author technosf
  * @since 0.0.1
  * @version 0.0.1
- * 
  */
-public class ReplyCodeTest
-{
-
-	@Test
-	public void testValueCount()
+public enum SessionState
 	{
-		assertEquals(ReplyCode.values().length, 22);
+		/** CONNECT state: waiting for a Hello. */
+		CONNECT,
+
+		/** COMMAND state: waiting for a command. */
+		COMMAND,
+
+		/** RCPT state: waiting for a RCPT &lt;email address&gt; command. */
+		RCPT,
+
+		/** Waiting for data. */
+		DATA,
+
+		/** End of client transmission. */
+		CLOSED;
+
 	}
-
-
-	@Test
-	public void testEnumToCode()
-	{
-		for (ReplyCode rc : ReplyCode.values())
-		{
-
-			assertEquals(rc.name(), "_" + rc.getCode());
-		}
-	}
-
-
-	@Test
-	public void testToString()
-	{
-		for (ReplyCode rc : ReplyCode.values())
-		{
-			// System.out.println(rc);
-			assertTrue(rc.toString().matches("\\d\\d\\d \\(.*\\)"));
-		}
-	}
-}

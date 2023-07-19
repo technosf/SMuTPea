@@ -22,7 +22,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import com.github.technosf.smutpea.core.exceptions.MTAException;
-import com.github.technosf.smutpea.core.rfc2821.ReplyCode;
+import com.github.technosf.smutpea.core.rfc.ReplyCode;
 
 /**
  * AbstractMTAAbstractTest

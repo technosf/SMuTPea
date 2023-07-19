@@ -16,7 +16,7 @@ package com.github.technosf.smutpea.mta.impl;
 import static java.util.Objects.requireNonNull;
 
 import com.github.technosf.smutpea.core.Buffer;
-import com.github.technosf.smutpea.core.rfc2821.Session;
+import com.github.technosf.smutpea.core.rfc.Session;
 
 /**
  * Basic Buffer, per RFC2821 Section 2.3.6

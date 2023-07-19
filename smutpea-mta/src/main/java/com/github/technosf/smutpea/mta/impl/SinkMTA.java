@@ -17,10 +17,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.technosf.smutpea.core.Buffer;
-import com.github.technosf.smutpea.core.MTA;
 import com.github.technosf.smutpea.core.exceptions.MTAException;
-import com.github.technosf.smutpea.core.rfc2821.Command.CommandLine;
-import com.github.technosf.smutpea.core.rfc2821.ReplyCode;
+import com.github.technosf.smutpea.core.rfc.ReplyCode;
+import com.github.technosf.smutpea.core.rfc.Command.CommandLine;
 import com.github.technosf.smutpea.mta.AbstractMTA;
 
 /**
@@ -41,7 +40,6 @@ import com.github.technosf.smutpea.mta.AbstractMTA;
  */
 public final class SinkMTA
         extends AbstractMTA
-  //      implements MTA
 {
     private static final Logger logger = LoggerFactory.getLogger(SinkMTA.class);
 
@@ -81,7 +79,7 @@ public final class SinkMTA
     /**
      * {@inheritDoc}
      * 
-     * @see com.github.technosf.smutpea.core.impl.AbstractMTA#processValidCommand(com.github.technosf.smutpea.core.rfc2821.Command.CommandLine)
+     * @see com.github.technosf.smutpea.core.impl.AbstractMTA#processValidCommand(com.github.technosf.smutpea.core.rfc.Command.CommandLine)
      */
     @Override
     protected void processValidCommand(CommandLine commandLine)
@@ -123,7 +121,7 @@ public final class SinkMTA
     /**
      * {@inheritDoc}
      * 
-     * @see com.github.technosf.smutpea.core.impl.AbstractMTA#processInvalidCommand(com.github.technosf.smutpea.core.rfc2821.Command.CommandLine)
+     * @see com.github.technosf.smutpea.core.impl.AbstractMTA#processInvalidCommand(com.github.technosf.smutpea.core.rfc.Command.CommandLine)
      */
     @Override
     protected void processInvalidCommand(final CommandLine commandLine)
@@ -175,7 +173,7 @@ public final class SinkMTA
     {
         // Do nothing.
         setResponse(ReplyCode._250,
-                String.format("%1$s %2$s", ReplyCode._250.getCode(), // TODO validate
+                String.format("%1$s %2$s", ReplyCode._250.getCode(), 
                         "Mail sent to /dev/null"));
         logger.info(CONST_MSG_SENT, getReplyCode().getCode());
     }

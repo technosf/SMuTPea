@@ -11,7 +11,7 @@
  * specific language governing permissions and limitations under the License.
  */
 
-package com.github.technosf.smutpea.core.rfc2821;
+package com.github.technosf.smutpea.core.rfc;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.fail;
@@ -26,12 +26,13 @@ import org.testng.annotations.Test;
 
 import com.github.technosf.smutpea.core.exceptions.SessionStateException;
 
+
 /**
  * Unit test for {@code StateTable}
  * 
  * @author technosf
  * @since 0.0.1
- * @version 0.0.1
+ * @version 0.0.5
  * 
  */
 public class StateTableTest

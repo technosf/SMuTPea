@@ -26,7 +26,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import com.github.technosf.smutpea.core.Buffer;
-import com.github.technosf.smutpea.core.rfc2821.Session;
+import com.github.technosf.smutpea.core.rfc.Session;
 
 /**
  * Unit test for {@code Buffer}

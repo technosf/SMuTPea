@@ -11,9 +11,9 @@
  * specific language governing permissions and limitations under the License.
  */
 
-package com.github.technosf.smutpea.core.rfc2821;
+package com.github.technosf.smutpea.core.rfc;
 
-import static com.github.technosf.smutpea.core.rfc2821.Command.parseLine;
+import static com.github.technosf.smutpea.core.rfc.Command.parseLine;
 import static java.util.Objects.requireNonNull;
 
 import org.slf4j.Logger;
@@ -24,7 +24,7 @@ import com.github.technosf.smutpea.core.exceptions.MTAException;
 import com.github.technosf.smutpea.core.exceptions.SessionClosedException;
 import com.github.technosf.smutpea.core.exceptions.SessionStateException;
 import com.github.technosf.smutpea.core.exceptions.SmtpLineException;
-import com.github.technosf.smutpea.core.rfc2821.Command.CommandLine;
+import com.github.technosf.smutpea.core.rfc.Command.CommandLine;
 
 /**
  * A SMTP session.

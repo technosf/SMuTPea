@@ -11,7 +11,7 @@
  * specific language governing permissions and limitations under the License.
  */
 
-package com.github.technosf.smutpea.core.rfc2821;
+package com.github.technosf.smutpea.core.rfc;
 
 import static org.easymock.EasyMock.createNiceMock;
 import static org.easymock.EasyMock.expect;
@@ -32,14 +32,16 @@ import org.testng.annotations.Test;
 import com.github.technosf.smutpea.core.MTA;
 import com.github.technosf.smutpea.core.exceptions.MTAException;
 import com.github.technosf.smutpea.core.exceptions.SmtpLineException;
-import com.github.technosf.smutpea.core.rfc2821.Command.CommandLine;
+
+
+import com.github.technosf.smutpea.core.rfc.Command.CommandLine;
 
 /**
  * Unit test for {@code Session}
  * 
  * @author technosf
  * @since 0.0.1
- * @version 0.0.1
+ * @version 0.0.5
  * 
  */
 public class SessionTest
@@ -49,7 +51,11 @@ public class SessionTest
 
 	private Session classUnderTest = null;
 
-
+	/**
+	 * Train the Mock MTA and create the CUT prior to Test
+	 * 
+	 * @throws MTAException
+	 */
 	@BeforeMethod
 	public void beforeMethod() throws MTAException
 	{
@@ -67,6 +73,10 @@ public class SessionTest
 
 	}
 
+	/*
+	* Test Fixtures
+	* Create Commands, with expected response
+	*/ 
 	private static Object[][] CMD_QUIT_221 = new Object[][]
 		{
 						{
@@ -103,6 +113,7 @@ public class SessionTest
 			}
 	};
 
+	@SuppressWarnings("unused")
 	private static Object[][] CMD_MAIL_250 = new Object[][]
 		{
 						{
@@ -112,6 +123,7 @@ public class SessionTest
 			}
 	};
 
+	@SuppressWarnings("unused")
 	private static Object[][] CMD_MAIL_503 = new Object[][]
 		{
 						{
@@ -121,6 +133,7 @@ public class SessionTest
 			}
 	};
 
+	@SuppressWarnings("unused")
 	private static Object[][] CMD_RCPT_250 = new Object[][]
 		{
 						{
@@ -131,6 +144,7 @@ public class SessionTest
 			}
 	};
 
+	@SuppressWarnings("unused")
 	private static Object[][] CMD_RCPT_503 = new Object[][]
 		{
 						{
@@ -188,12 +202,12 @@ public class SessionTest
 			}
 	};
 
-	private static Object[][] CMD_EHLO_550 = new Object[][]
+	private static Object[][] CMD_EHLO_521 = new Object[][]
 		{
 						{
 										new CommandLine(Command.EHLO, false,
 														new String[] {}),
-										ReplyCode._550, "Ehlo failure", "EHLO"
+										ReplyCode._521, "Not accepting mail", "EHLO"
 			}
 	};
 
@@ -234,76 +248,75 @@ public class SessionTest
 	// Object[][] conversation { commandLine, ReplyCode, ReplyDescription, input line }
 	{
 		Object[][] testdata =
-						new Object[][]
-							{
-												{
-																"Ehlo after connect, good response code.",
-																null,
-																CMD_EHLO_250
-											},
-											{
-															"Ehlo after connect, not recognized.",
-															null,
-															CMD_EHLO_500
-										},
-											{
-															"Ehlo after connect, good response code.",
-															null,
-															CMD_EHLO_501
-									},
-											{
-															"Ehlo after connect, recognized, but not implemented.",
-															null,
-															CMD_EHLO_502
-								},
-											{
-															"Ehlo after connect, domain not a FQDN.",
-															null,
-															CMD_EHLO_504
-							},
-											{
-															"Ehlo recognized but not implemented.",
-															null,
-															CMD_EHLO_550
-						},
-											{
-															"Quit after Connect, valid Reply code",
-															null,
-															CMD_QUIT_221
-					},
-											{
-															"Quit after Connect, invalid Reply code",
-															MTAException.class,
-															CMD_QUIT_450
+			new Object[][] {
+				{
+					"Ehlo after connect, good response code.",
+					null,
+					CMD_EHLO_250
+				},
+				{
+					"Ehlo after connect, not recognized.",
+					null,
+					CMD_EHLO_500
+				},
+				{
+					"Ehlo after connect, good response code.",
+					null,
+					CMD_EHLO_501
+				},
+				{
+					"Ehlo after connect, recognized, but not implemented - Invalid code from MTA.",
+					MTAException.class,
+					CMD_EHLO_502
+				},
+				{
+					"Ehlo after connect, domain not a FQDN.",
+					null,
+					CMD_EHLO_504
+				},
+				{
+					"Ehlo recognized but not implemented.",
+					null,
+					CMD_EHLO_521
+				},
+				{
+					"Quit after Connect, valid Reply code",
+					null,
+					CMD_QUIT_221
+				},
+				{
+					"Quit after Connect, invalid Reply code",
+					MTAException.class,
+					CMD_QUIT_450
 				},
 
-											{
-															"DATA out of order, valid Reply code",
-															MTAException.class,
-															CMD_DATA_503
-			},
-											{
-															"DATA out of order, invalid Reply code",
-															MTAException.class,
-															CMD_DATA_221
-		},
-											{
-															"Reset, good reply code",
-															null,
-															CMD_RSET_250
-	},
-											{
-															"Reset, unexpected args",
-															MTAException.class,
-															CMD_RSET_501
-},
-											{
-															"Reset, bad reply code",
-															MTAException.class,
-															CMD_RSET_503
-}
+				{
+					"DATA out of order, valid Reply code",
+					MTAException.class,
+					CMD_DATA_503
+				},
+				{
+					"DATA out of order, invalid Reply code",
+					MTAException.class,
+					CMD_DATA_221
+				},
+				{
+					"Reset, good reply code",
+					null,
+					CMD_RSET_250
+				},
+				{
+					"Reset, unexpected args",
+					MTAException.class,
+					CMD_RSET_501
+				},
+				{
+					"Reset, bad reply code",
+					MTAException.class,
+					CMD_RSET_503
+				}
 
-						};
+			};
 
 		return testdata;
 	}
@@ -433,11 +446,12 @@ public class SessionTest
 
 		assertNotNull(classUnderTest);
 
-		for (int i = 0; i < conversation.length; i++)
-		{
+		for (Object[] line : conversation) {
+			boolean lastline = ( line == conversation[conversation.length - 1]);
+			
 			reset(mta);
 
-			if (conversation[i][0] == null)
+			if (line[0] == null)
 			// Expect a SEND
 			{
 				mta.send();
@@ -445,40 +459,38 @@ public class SessionTest
 			}
 			else
 			{
-				mta.command((CommandLine) conversation[i][0]);
+				mta.command((CommandLine) line[0]);
 				expectLastCall().anyTimes();
 			}
 
 			expect(mta.getReplyCode())
-							.andReturn((ReplyCode) conversation[i][1])
+							.andReturn((ReplyCode) line[1])
 							.anyTimes();
 
 			replay(mta);
 
 			try
 			{
-				classUnderTest.process((String) conversation[i][3]);
+				classUnderTest.process((String) line[3]);
 
-				if ((i == (conversation.length - 1))
-								&& expectedException != null)
+				if (lastline && expectedException != null)
 				// Last command, and an exception is expected
 				{
-					fail(String.format("Expected %1$s not thrown.",
-									expectedException.getClass()));
+					fail(String.format("'%1$s' - Expected %2$s not thrown for '%3$s'.",
+						description, expectedException.getClass(), line[0]));
 				}
 			}
 			catch (Exception e)
 			{
-				if ((i == (conversation.length - 1))
-								&& expectedException != null)
+				if (lastline && expectedException != null)
 				// Last command, and an exception is expected
 				{
 					assertEquals(expectedException, e.getClass());
 				}
 				else
 				{
-					fail(String.format("Unexpected %1$s [%2$s] thrown.",
-									e.getClass(), e.getMessage()));
+					fail(String.format("'%1$s' - Unexpected %2$s [%3$s] thrown for %4$s",
+					description, e.getClass(), e.getMessage(),line[0]));
 				}
 			}
 

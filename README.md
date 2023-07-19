@@ -39,7 +39,7 @@ This allows implementors to write their own MTA without having to write the defi
 
 ### SMuTPea-MTA ###
 **MTA** provides an abstract MTA that can be extended by the MTA writer. This abstract MTA provides some basic functionality and breaks out the choices the MTA implementor has to consider into well-defined abstract methods.
-Also provided here is a _Sink_ MTA: An MTA that looks and acts like an MTA but requires no configuration, no network connection and sends no email. 
+Also provided here is a _Sink_ MTA: An MTA that looks and acts like an MTA but requires no configuration, no network connection and sends **no** email. 
 Having a MTA that requires no set up and _will not send email_ is useful for testing applications that do expect a MTA to be available.
 
 ### SMuTPea-Servers ###
@@ -62,16 +62,21 @@ It was the need to test email producing applications that sparked the creation o
 
 ## Examples ##
 
-Included are a couple of example SMTP server implementation servers that utilize the _sink_ MTA. One server is the command line server,__CLISinkServer__. It can be executed thus:
+Included are a couple of example SMTP server implementation servers that utilize the _sink_ MTA. One server is the command line server,__CLISinkServer__, that opens up as a connection to the MTA. It can be executed thus:
 ```
-java -cp smutpea-all-0.0.4-SNAPSHOT.jar com.github.technosf.smutpea.server.example.CLISinkServer
+java -cp smutpea-all-0.0.5-SNAPSHOT.jar com.github.technosf.smutpea.server.example.CLISinkServer
 ```
 
 And with debgging on so the program flow can be examined:
 ```
-java -Dorg.slf4j.simpleLogger.defaultLogLevel=debug -cp smutpea-all-0.0.4-SNAPSHOT.jar com.github.technosf.smutpea.server.example.CLISinkServer
+java -Dorg.slf4j.simpleLogger.defaultLogLevel=debug -cp smutpea-all-0.0.5-SNAPSHOT.jar com.github.technosf.smutpea.server.example.CLISinkServer
 ```
-The other example server is a socket-based sink server __SocketSinkServer__.
+The other example server is a socket-based sink server __SocketSinkServer__, which runs on the standard SMTP port, 25.
+
+
+## History ##
+0.0.5 Updated to RFC5321 & RFC7504, implementation of a Dummy server. Cleaned up project structure, return code validation.
+0.0.1-0.0.4 First cut at RFC2821, implementation of Refuse and Sink MTAs and servers 
 
 
 ## License ##

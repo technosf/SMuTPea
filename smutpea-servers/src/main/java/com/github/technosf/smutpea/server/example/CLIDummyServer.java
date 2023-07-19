@@ -20,23 +20,23 @@ import org.slf4j.LoggerFactory;
 
 import com.github.technosf.smutpea.core.MTA;
 import com.github.technosf.smutpea.core.exceptions.MTAException;
-import com.github.technosf.smutpea.mta.impl.RefuseMTA;
+import com.github.technosf.smutpea.mta.impl.DummyMTA;
 import com.github.technosf.smutpea.server.AbstractServer;
 
 /**
- * CLIRefuseServer
+ * CLIDummyServer
  * <p>
- * A command line interface server based MTA that dumps all email
+ * A command line interface server based MTA that refuses to connect
  * 
  * @author technosf
- * @since 0.0.1
+ * @since 0.0.5
  * @version 0.0.5
  */
-public class CLIRefuseServer extends AbstractServer
+public class CLIDummyServer extends AbstractServer
 {
 
     private static final Logger logger =
-            LoggerFactory.getLogger(CLIRefuseServer.class);
+            LoggerFactory.getLogger(CLIDummyServer.class);
 
     /*
      * Constants
@@ -53,15 +53,15 @@ public class CLIRefuseServer extends AbstractServer
 
 
     /**
-     * Run a CLI RefuseMTA
+     * Run a CLI DummyMTA
      */
     public static void main(String[] args)
     {
-        CLIRefuseServer server = null;
+        CLIDummyServer server = null;
 
         try
         {
-            server = new CLIRefuseServer();
+            server = new CLIDummyServer();
             logger.info(CONST_MSG_MTA_OPEN);
             server.open();
         }
@@ -74,15 +74,15 @@ public class CLIRefuseServer extends AbstractServer
 
 
     /**
-     * Constructor placing a {@code RefuseMTA} on the standard command line
+     * Constructor placing a {@code SinkMTA} on the standard command line
      * 
      * @throws MTAException
-     *             the {@code RefuseMTA} could not be created.
+     *             the {@code SinkMTA} could not be created.
      */
-    CLIRefuseServer() throws MTAException
+    CLIDummyServer() throws MTAException
     {
         super(System.in, System.out);
-        mta = new RefuseMTA("local.refuse.server");
+        mta = new DummyMTA("local.dummy.server");
     }
 
 

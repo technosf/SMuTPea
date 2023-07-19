@@ -13,7 +13,7 @@
 
 package com.github.technosf.smutpea.core.exceptions;
 
-import com.github.technosf.smutpea.core.rfc2821.Command.CommandLine;
+import com.github.technosf.smutpea.core.rfc.Command.CommandLine;
 
 /**
  * Message Transfer Agent Exception

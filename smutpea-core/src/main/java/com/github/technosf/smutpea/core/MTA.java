@@ -14,20 +14,21 @@
 package com.github.technosf.smutpea.core;
 
 import com.github.technosf.smutpea.core.exceptions.MTAException;
-import com.github.technosf.smutpea.core.rfc2821.Command.CommandLine;
-import com.github.technosf.smutpea.core.rfc2821.ReplyCode;
+import com.github.technosf.smutpea.core.rfc.ReplyCode;
+import com.github.technosf.smutpea.core.rfc.Command.CommandLine;
 
 /**
- * <em>Message Transfer Agent</em> per RFC2821 section 2.3.3
+ * <em>Message Transfer Agent</em> per RFC5321 section 2.3.3
  * <p>
  * Designed as a per-session call-back interface for behavioral-specifics, with
- * the majority of the (well-defined) REF2821 work done in the framework by
+ * the majority of the (well-defined) REF5321 work done in the framework by
  * session.
  * 
  * @see http://tools.ietf.org/html/rfc2821#section-2.3.3
+ * @see http://tools.ietf.org/html/rfc5321#section-2.3.3
  * @author technosf
  * @since 0.0.1
- * @version 0.0.1
+ * @version 0.0.5
  */
 public interface MTA
 {

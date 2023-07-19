@@ -22,10 +22,10 @@ import com.github.technosf.smutpea.core.MTA;
 import com.github.technosf.smutpea.core.exceptions.MTAException;
 import com.github.technosf.smutpea.core.exceptions.SessionStateException;
 import com.github.technosf.smutpea.core.exceptions.SmtpLineException;
-import com.github.technosf.smutpea.core.rfc2821.Command.CommandLine;
-import com.github.technosf.smutpea.core.rfc2821.ReplyCode;
-import com.github.technosf.smutpea.core.rfc2821.Session;
-import com.github.technosf.smutpea.core.rfc2821.SessionState;
+import com.github.technosf.smutpea.core.rfc.ReplyCode;
+import com.github.technosf.smutpea.core.rfc.Session;
+import com.github.technosf.smutpea.core.rfc.SessionState;
+import com.github.technosf.smutpea.core.rfc.Command.CommandLine;
 
 /**
  * An Abstract {@code MTA}
@@ -40,7 +40,7 @@ import com.github.technosf.smutpea.core.rfc2821.SessionState;
  * 
  * @author technosf
  * @since 0.0.1
- * @version 0.0.1
+ * @version 0.0.5
  */
 public abstract class AbstractMTA implements MTA
 {
@@ -50,7 +50,7 @@ public abstract class AbstractMTA implements MTA
     /*
      * Constants
      */
-    private static final String CONST_MSG_PROCESS = "Processing line:[{}]";
+    private static final String CONST_MSG_PROCESS = "Client:[{}]";
     private static final String CONST_MSG_NO_CMD = "No command found";
     private static final String CONST_MSG_INVLD_SESS_STATE =
             "Invalid session state:[{}] for command:[{}s]";
@@ -60,7 +60,7 @@ public abstract class AbstractMTA implements MTA
     /**
      * Command response format - code, message, extra
      */
-    private static final String CONST_FMT_CMD_RESPONSE = "%1$s %2$s %3$s";
+    protected static final String CONST_FMT_CMD_RESPONSE = "%1$s %2$s %3$s";
 
     /**
      * The MTA name
@@ -212,10 +212,12 @@ public abstract class AbstractMTA implements MTA
     /**
      * {@inheritDoc}
      * 
+     * Default "220" implementation. Can be overriden.
+     * 
      * @see com.github.technosf.smutpea.core.MTA#connect(java.lang.String)
      */
     @Override
-    public final void connect()
+    public void connect()
     {
         setResponse(ReplyCode._220, String.format(CONST_FMT_CMD_RESPONSE,
                 ReplyCode._220.getCode(),
@@ -295,7 +297,7 @@ public abstract class AbstractMTA implements MTA
     /**
      * {@inheritDoc}
      * 
-     * @see com.github.technosf.smutpea.core.MTA#command(com.github.technosf.smutpea.core.rfc2821.Command.CommandLine)
+     * @see com.github.technosf.smutpea.core.MTA#command(com.github.technosf.smutpea.core.rfc.Command.CommandLine)
      */
     @Override
     public final void command(final CommandLine commandLine)

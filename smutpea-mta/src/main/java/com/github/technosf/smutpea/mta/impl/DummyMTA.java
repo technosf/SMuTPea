@@ -20,22 +20,23 @@ import com.github.technosf.smutpea.core.rfc.Command.CommandLine;
 import com.github.technosf.smutpea.mta.AbstractMTA;
 
 /**
- * {@code RefuseMTA} is a basic MTA that refuses to send email.
+ * {@code DummyMTA} is a basic MTA that refuses connections, per RFC7504.
  * <p>
- * {@code RefuseMTA} returns a <em>554 No SMTP service here</em> message on
- * HELO/EHLO.
+ * {@code RefuseMTA} returns a <em>521 Server does not accept mail</em> message on
+ * Connect.
  * 
  * @author technosf
- * @since 0.0.2
+ * @since 0.0.5
  * @version 0.0.5
  */
-public final class RefuseMTA
+public final class DummyMTA
         extends AbstractMTA
 {
+
     /**
     * 
     */
-    private final static String CONST_MTA_NAME = "RefuseMTA v1.0.0";
+    private final static String CONST_MTA_NAME = "DummyMTA v1.0.0";
 
 
     /**
@@ -44,12 +45,17 @@ public final class RefuseMTA
      * @param mtaDomain
      * @throws MTAException
      */
-    public RefuseMTA(final String domain) throws MTAException
+    public DummyMTA(final String domain) throws MTAException
     {
         super(CONST_MTA_NAME, domain);
     }
 
 
+    @Override
+    public void connect()
+    {
+        setResponse(ReplyCode._521);
+    }
     /**
      * {@inheritDoc}
      * 
@@ -59,7 +65,7 @@ public final class RefuseMTA
     protected void processValidCommand(CommandLine commandLine)
             throws MTAException
     {
-        setResponse(ReplyCode._421);
+        setResponse(ReplyCode._521);
     }
 
 
@@ -72,7 +78,7 @@ public final class RefuseMTA
     protected void processInvalidCommand(CommandLine commandLine)
             throws MTAException
     {
-        setResponse(ReplyCode._421);
+        setResponse(ReplyCode._521);
     }
 
 
@@ -86,7 +92,7 @@ public final class RefuseMTA
     {
         // Do nothing.
 
-        setResponse(ReplyCode._421);
+        setResponse(ReplyCode._521);
     }
 
 

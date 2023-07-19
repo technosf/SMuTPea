@@ -11,7 +11,7 @@
  * specific language governing permissions and limitations under the License.
  */
 
-package com.github.technosf.smutpea.core.rfc2821;
+package com.github.technosf.smutpea.core.rfc;
 
 import static org.testng.Assert.assertEquals;
 
@@ -25,17 +25,21 @@ import org.testng.annotations.Test;
 import com.github.technosf.smutpea.core.exceptions.SessionClosedException;
 import com.github.technosf.smutpea.core.exceptions.SessionStateException;
 
+
 /**
  * Unit test for {@code StateMachine}
  * 
  * @author technosf
  * @since 0.0.1
- * @version 0.0.1
+ * @version 0.0.5
  * 
  */
 public class StateMachineTest
 {
 
+	/*
+	 * Test fixtures
+	 */
 	@DataProvider(name = "keys")
 	private Object[][] testdata()
 	{
@@ -73,6 +77,10 @@ public class StateMachineTest
 		return data.toArray(new Object[][] {});
 	};
 
+	
+	/*
+	 * Tests
+	 */
 
 	@Test(dataProvider = "keys")
 	public void key(SessionState state, Command command, Object result)

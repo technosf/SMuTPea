@@ -11,7 +11,7 @@
  * specific language governing permissions and limitations under the License.
  */
 
-package com.github.technosf.smutpea.core.rfc2821;
+package com.github.technosf.smutpea.core.rfc;
 
 import java.util.AbstractMap;
 import java.util.HashMap;
@@ -21,15 +21,16 @@ import com.github.technosf.smutpea.core.exceptions.SessionClosedException;
 import com.github.technosf.smutpea.core.exceptions.SessionStateException;
 
 /**
- * StateMachine synthesized from RFC2821 Section 4.1.4.
+ * StateMachine synthesized from RFC5321 Section 4.1.4.
  * <p>
  * A state machine defining valid transitions from a given state to a new state
- * for a given command. Synthesized from RFC2821 Section 4.1.4.
+ * for a given command. Synthesized from RFC5321 Section 4.1.4.
  * 
+ * @see http://tools.ietf.org/html/rfc5321#section-4.1.4
  * @see http://tools.ietf.org/html/rfc2821#section-4.1.4
  * @author technosf
  * @since 0.0.1
- * @version 0.0.1
+ * @version 0.0.5
  */
 public final class StateMachine
 {
@@ -59,17 +60,33 @@ public final class StateMachine
                             Command.QUIT),
                             SessionState.CLOSED);
                     put(key(SessionState.CONNECT,
+                            Command.HELP),
+                            SessionState.CONNECT);
+                    put(key(SessionState.CONNECT,
                             Command.NOOP),
                             SessionState.CONNECT);
                     put(key(SessionState.CONNECT,
                             Command.RSET),
                             SessionState.CONNECT);
+                    put(key(SessionState.CONNECT,
+                            Command.VRFY),
+                            SessionState.CONNECT);
+                    put(key(SessionState.CONNECT,
+                            Command.EXPN),
+                            SessionState.CONNECT);
+
                     /*
                      * From COMMAND state
                      */
                     put(key(SessionState.COMMAND,
                             Command.MAIL),
                             SessionState.RCPT);
+                    put(key(SessionState.COMMAND,
+                            Command.QUIT),
+                            SessionState.CLOSED);
+                    put(key(SessionState.COMMAND,
+                            Command.HELP),
+                            SessionState.COMMAND);
                     put(key(SessionState.COMMAND,
                             Command.NOOP),
                             SessionState.COMMAND);
@@ -82,12 +99,6 @@ public final class StateMachine
                     put(key(SessionState.COMMAND,
                             Command.EXPN),
                             SessionState.COMMAND);
-                    put(key(SessionState.COMMAND,
-                            Command.HELP),
-                            SessionState.COMMAND);
-                    put(key(SessionState.COMMAND,
-                            Command.QUIT),
-                            SessionState.CLOSED);
                     /*
                      * From RCPT state
                      */
@@ -98,7 +109,22 @@ public final class StateMachine
                             Command.DATA),
                             SessionState.DATA);
                     put(key(SessionState.RCPT,
+                            Command.QUIT),
+                            SessionState.CLOSED);
+                    put(key(SessionState.RCPT,
+                            Command.HELP),
+                            SessionState.RCPT);
+                    put(key(SessionState.RCPT,
                             Command.NOOP),
+                            SessionState.RCPT);
+                    put(key(SessionState.RCPT,
+                            Command.RSET),
+                            SessionState.COMMAND);
+                    put(key(SessionState.RCPT,
+                            Command.VRFY),
+                            SessionState.RCPT);
+                    put(key(SessionState.RCPT,
+                            Command.EXPN),
                             SessionState.RCPT);
                 }
             };

@@ -11,7 +11,7 @@
  * specific language governing permissions and limitations under the License.
  */
 
-package com.github.technosf.smutpea.core.rfc2821;
+package com.github.technosf.smutpea.core.rfc;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -19,7 +19,9 @@ import java.util.Map;
 /**
  * Server Reply Codes.
  * <p>
- * RFC2821 SMTP Server Reply Codes, per RFC2821 Section 4.2
+ * RFC5321 & RFC7504 SMTP Server Reply Codes, per RFC5321 Section 4.2 & RFC7504
+ * 
+ * RFC5321 Obsoletes RFC2821
  * 
  * <pre>
  * Code| Action / Response  | Error Code | Description
@@ -49,16 +51,20 @@ import java.util.Map;
  * </pre>
  * 
  * @see http://tools.ietf.org/html/rfc2821#section-4.2
+ * @see http://tools.ietf.org/html/rfc5321#section-4.2
+ * @see http://tools.ietf.org/html/rfc7504
  * 
  * @author technosf
  * @since 0.0.1
- * @version 0.0.1
+ * @version 0.0.5
  */
 public enum ReplyCode
 	{
 		/*
 		 * The reply codes and default descriptions.
 		 */
+
+		/*  RFC2821 */
 		_211(211, "System status, or system help reply"),
 		_214(214, "Help message"),
 		_220(220, "<domain> Service ready"),
@@ -66,11 +72,14 @@ public enum ReplyCode
 		_250(250, "Requested mail action okay, completed"),
 		_251(251, "User not local; will forward to <forward-path>"),
 		_252(252, "Cannot VRFY user, but will accept message and attempt delivery"),
+	
 		_354(354, "Start mail input; end with <CRLF>.<CRLF>"),
+	
 		_421(421, "<domain> Service not available, closing transmission channel"),
 		_450(450, "Requested mail action not taken: mailbox unavailable"),
 		_451(451, "Requested action aborted: local error in processing"),
 		_452(452, "Requested action not taken: insufficient system storage"),
+	
 		_500(500, "Syntax error, command unrecognized"),
 		_501(501, "Syntax error in parameters or arguments"),
 		_502(502, "Command not implemented"),
@@ -80,7 +89,16 @@ public enum ReplyCode
 		_551(551, "User not local; please try <forward-path>"),
 		_552(552, "Requested mail action aborted: exceeded storage allocation"),
 		_553(553, "Requested action not taken: mailbox name not allowed"),
-		_554(554, "Transaction failed");
+		_554(554, "Transaction failed"),
+
+
+		/*  RFC5321 */
+		_455(455, "Server unable to accommodate parameters"),
+		_555(555, "MAIL FROM/RCPT TO parameters not recognized or not implemented"),
+
+		/*  RFC7504 */
+		_521(521, "Server does not accept mail"),
+		_556(556, "Domain does not accept mail");
 
 		/**
 		 * Description formatter
