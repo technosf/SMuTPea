@@ -76,6 +76,7 @@ The other example server is a socket-based sink server __SocketSinkServer__, whi
 
 ## History ##
 0.0.5 Updated to RFC5321 & RFC7504, implementation of a Dummy server. Cleaned up project structure, return code validation.
+
 0.0.1-0.0.4 First cut at RFC2821, implementation of Refuse and Sink MTAs and servers 
 
 
