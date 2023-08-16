@@ -232,7 +232,7 @@ public abstract class AbstractMTA implements MTA
      * @see com.github.technosf.smutpea.core.MTA#processLine(java.lang.String)
      */
     @Override
-    public final void processLine(String line) throws MTAException
+    public final void processInputLine(String line) throws MTAException
     {
         logger.debug(CONST_MSG_PROCESS, line);
 
@@ -385,5 +385,17 @@ public abstract class AbstractMTA implements MTA
     public final ReplyCode getReplyCode()
     {
         return replyCode;
+    }
+
+    /**
+     * {@inheritDoc}
+     * 
+     * Override as needed
+     * 
+     * @see com.github.technosf.smutpea.core.MTA#close()
+     */
+    @Override
+    public void close()
+    {
     }
 }

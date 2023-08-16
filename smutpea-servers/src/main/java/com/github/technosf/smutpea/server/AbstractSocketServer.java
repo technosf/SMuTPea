@@ -24,7 +24,8 @@ import org.slf4j.MDC;
  * @since 0.0.1
  * @version 0.0.1
  */
-public abstract class AbstractSocketServer extends AbstractServer
+public abstract class AbstractSocketServer 
+extends AbstractServer
 {
 	private static final Logger logger = LoggerFactory.getLogger(AbstractSocketServer.class);
 
@@ -34,7 +35,7 @@ public abstract class AbstractSocketServer extends AbstractServer
 	private static final String CONST_ERR_SOCKET_SERVE = "Serving socket...";
 	private static final String CONST_ERR_SOCKET_CLOSE = "Exception closing socket";
 
-	private final Socket socket;
+	protected final Socket socket;
 
 	/**
 	 * @param socket
@@ -53,10 +54,10 @@ public abstract class AbstractSocketServer extends AbstractServer
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see com.github.technosf.smutpea.server.AbstractServer#close()
+	 * @see com.github.technosf.smutpea.server.Server#cleanup()
 	 */
 	@Override
-	protected void close()
+    public void cleanup()
 	{
 		if (!socket.isClosed())
 		{
@@ -74,5 +75,13 @@ public abstract class AbstractSocketServer extends AbstractServer
 		MDC.remove("Local Port");
 	}
 
-
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.github.technosf.smutpea.server.Server#getServerId()
+	 */
+    @Override
+    public String getServerId() {
+        return String.format("%1$s:%2$s", socket.getInetAddress(), socket.getPort());
+    }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 technosf [https://github.com/technosf]
+ * Copyright 2015 technosf [https://github.com/technosf]
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -28,25 +28,26 @@ import org.slf4j.LoggerFactory;
 
 import com.github.technosf.smutpea.core.MTA;
 import com.github.technosf.smutpea.core.exceptions.MTAException;
-import com.github.technosf.smutpea.mta.impl.SinkMTA;
+import com.github.technosf.smutpea.mta.impl.DummyMTA;
 import com.github.technosf.smutpea.server.AbstractSocketServer;
 
 /**
- * SocketSinkServer
+ * SocketDummyServer
  * <p>
- * A socket server based MTA that dumps all email
+ * A socket server based MTA that refuses connections with a
+ * <em>521 Server does not accept mail</em> message on HELO/EHLO
  * 
  * @author technosf
- * @since 0.0.1
- * @version 0.0.1
+ * @since 0.0.5
+ * @version 0.0.5
  */
-public final class SocketSinkServer
+public final class SocketDummyServer
         extends AbstractSocketServer
         implements Runnable
 {
 
     private static final Logger logger = LoggerFactory
-            .getLogger(SocketSinkServer.class);
+            .getLogger(SocketDummyServer.class);
 
     private static final ExecutorService executorService = Executors
             .newCachedThreadPool();
@@ -54,8 +55,7 @@ public final class SocketSinkServer
     /*
      * Constants
      */
-    private static final String CONST_SERVER_NAME =
-            "smutpea SocketSinkServer[%1$s]";
+    private static final String CONST_SERVER_NAME = "SMuTPea SocketDummyServer[%1$s]";
     private static final String CONST_MSG_MAIN_START = "Main starting.";
     private static final String CONST_MSG_MAIN_END = "Main ending.";
     private static final String CONST_MSG_MTA_OPEN = "MTA connection opening.";
@@ -75,7 +75,7 @@ public final class SocketSinkServer
 
 
     /**
-     * Run Socket-connected SinkMTA's
+     * Run Socket-connected DummyMTA's
      * 
      * @throws IOException
      */
@@ -132,7 +132,7 @@ public final class SocketSinkServer
                     while (true)
                     {
                         Socket clientSocket = serverSocket.accept();
-                        executorService.submit(new SocketSinkServer(
+                        executorService.submit(new SocketDummyServer(
                                 clientSocket));
                     }
                 }
@@ -151,13 +151,13 @@ public final class SocketSinkServer
 
 
     /**
-     * Constructor creating a Sink MTA server for the given socket.
+     * Constructor creating a Dummy MTA server for the given socket.
      * 
      * @param socket
      *            the socket
      * @throws IOException
      */
-    public SocketSinkServer(Socket socket) throws IOException
+    public SocketDummyServer(Socket socket) throws IOException
     {
         super(socket);
     }
@@ -186,7 +186,7 @@ public final class SocketSinkServer
     {
         try
         {
-            return new SinkMTA("local.sink.server");
+            return new DummyMTA("local.dummy.server");
         }
         catch (MTAException e)
         {
@@ -208,5 +208,21 @@ public final class SocketSinkServer
         logger.info(CONST_MSG_MTA_OPEN);
         open(); // Open the connection
     }
+
+    
+    /**
+     * 
+     */
+    @Override
+    public String getServerId() {
+        return String.format(CONST_SERVER_NAME, super.getServerId());
+    }
+
+
+    //@Override
+    // public String getClientId() {
+    //     // TODO Auto-generated method stub
+    //     throw new UnsupportedOperationException("Unimplemented method 'getClientId'");
+    // }
 
 }

@@ -39,7 +39,7 @@ import com.github.technosf.smutpea.server.AbstractSocketServer;
  * 
  * @author technosf
  * @since 0.0.2
- * @version 0.0.2
+ * @version 0.0.5
  */
 public final class SocketRefuseServer
         extends AbstractSocketServer
@@ -56,7 +56,7 @@ public final class SocketRefuseServer
      * Constants
      */
     private static final String CONST_SERVER_NAME =
-            "smutpea SocketSinkServer[%1$s]";
+            "smutpea SocketRefuseServer[%1$s]";
     private static final String CONST_MSG_MAIN_START = "Main starting.";
     private static final String CONST_MSG_MAIN_END = "Main ending.";
     private static final String CONST_MSG_MTA_OPEN = "MTA connection opening.";
@@ -76,7 +76,7 @@ public final class SocketRefuseServer
 
 
     /**
-     * Run Socket-connected SinkMTA's
+     * Run Socket-connected RefuseMTA's
      * 
      * @throws IOException
      */
@@ -152,7 +152,7 @@ public final class SocketRefuseServer
 
 
     /**
-     * Constructor creating a Sink MTA server for the given socket.
+     * Constructor creating a Refuse MTA server for the given socket.
      * 
      * @param socket
      *            the socket
@@ -170,9 +170,9 @@ public final class SocketRefuseServer
      * @see com.github.technosf.smutpea.server.AbstractServer#close()
      */
     @Override
-    protected void close()
+    public void cleanup()
     {
-        super.close();
+        super.cleanup();
         logger.info(CONST_MSG_MTA_CLOSE);
     }
 
@@ -183,7 +183,7 @@ public final class SocketRefuseServer
      * @see com.github.technosf.smutpea.server.AbstractServer#getMTA()
      */
     @Override
-    protected MTA getMTA()
+    public MTA getMTA()
     {
         try
         {
@@ -208,6 +208,12 @@ public final class SocketRefuseServer
     {
         logger.info(CONST_MSG_MTA_OPEN);
         open(); // Open the connection
+    }
+
+
+    @Override
+    public String getServerId() {
+        return String.format(CONST_SERVER_NAME, super.getServerId());
     }
 
 }

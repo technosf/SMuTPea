@@ -55,6 +55,7 @@ public final class DummyMTA
     public void connect()
     {
         setResponse(ReplyCode._521);
+        close();
     }
     /**
      * {@inheritDoc}
@@ -65,7 +66,6 @@ public final class DummyMTA
     protected void processValidCommand(CommandLine commandLine)
             throws MTAException
     {
-        setResponse(ReplyCode._521);
     }
 
 
@@ -78,7 +78,6 @@ public final class DummyMTA
     protected void processInvalidCommand(CommandLine commandLine)
             throws MTAException
     {
-        setResponse(ReplyCode._521);
     }
 
 
@@ -90,9 +89,6 @@ public final class DummyMTA
     @Override
     protected final void sendMessage(final String message)
     {
-        // Do nothing.
-
-        setResponse(ReplyCode._521);
     }
 
 

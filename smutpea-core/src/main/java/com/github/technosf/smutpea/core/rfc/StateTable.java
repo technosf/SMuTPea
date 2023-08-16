@@ -28,7 +28,7 @@ import com.github.technosf.smutpea.core.exceptions.SessionStateException;
  * 
  * @author technosf
  * @since 0.0.1
- * @version 0.0.1
+ * @version 0.0.5
  */
 public final class StateTable
 {
@@ -38,7 +38,6 @@ public final class StateTable
 	/**
 	 * The history of the state table, including current SessionState.
 	 */
-	//@SuppressWarnings("serial")
 	private final LinkedList<SessionState>	stateHistory =
 		new LinkedList<SessionState>()
 			{
@@ -70,6 +69,25 @@ public final class StateTable
 	public final void updateState(SessionState newState)
 			throws SessionStateException
 	{
+		updateState( newState, true );
+	}
+
+
+	/**
+	 * Updates the current {@code SessionState}, adding it to the history.
+	 * 
+	 * @param state
+	 *            the new current state
+	 * @param respectClosed do not update from CLOSED
+	 * 
+	 * @throws SessionStateException
+	 *             thrown if the new state is {@literal null}
+	 */
+	public final void updateState(SessionState newState, boolean respectClosed )
+			throws SessionStateException
+	{
+		if (  SessionState.CLOSED ==  getState() && respectClosed ) return;
+
 		try
 		{
 			stateHistory.add(requireNonNull(newState));

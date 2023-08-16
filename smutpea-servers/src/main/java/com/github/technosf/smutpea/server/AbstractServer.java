@@ -22,12 +22,12 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.net.SocketException;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.technosf.smutpea.core.MTA;
 import com.github.technosf.smutpea.core.exceptions.MTAException;
+import com.github.technosf.smutpea.server.transcripts.Transcript;
 
 /**
  * AbstractServer
@@ -37,9 +37,10 @@ import com.github.technosf.smutpea.core.exceptions.MTAException;
  * 
  * @author technosf
  * @since 0.0.1
- * @version 0.0.1
+ * @version 0.0.5
  */
-public abstract class AbstractServer
+public abstract class AbstractServer 
+    implements Server
 {
     private static final Logger logger = LoggerFactory
             .getLogger(AbstractServer.class);
@@ -61,6 +62,8 @@ public abstract class AbstractServer
 
     private static final String CONST_ZPAD = "%04d";
 
+
+    //
     private final InputStream in;
     private final OutputStream out;
 
@@ -77,21 +80,7 @@ public abstract class AbstractServer
         this.out = out;
     }
 
-
-    /**
-     * Provides an MTA for this instance
-     * 
-     * @return the MTA
-     */
-    protected abstract MTA getMTA();
-
-
-    /**
-     * Clean up on MTA close.
-     */
-    protected abstract void close();
-
-
+    
     /**
      * Closes the InputStream
      * 
@@ -119,12 +108,19 @@ public abstract class AbstractServer
      */
     public void open()
     {
-        int dialogue = 0;
-        long uniquer = (Math.abs(System.nanoTime() / 1000000) * -1000000)
+        // Initialize identifeirs
+        int interaction = 0;
+        long uniquer = ProcessHandle.current().pid() 
                 + System.nanoTime();
 
+        // Initialize the MTA
         MTA mta = getMTA();
 
+        // Initialize JSON transcript
+        Transcript transcript = Transcript.getTranscript(mta.getMTAName(),getServerId(),String.valueOf(uniquer));
+
+
+        // Start I/O
         PrintStream output = new PrintStream(out);
 
         try
@@ -146,8 +142,9 @@ public abstract class AbstractServer
              */
             requireNonNull(mta).connect();
             logger.debug(CONST_MSG_MTA_DIALOGUE, uniquer,
-                    String.format(CONST_ZPAD, dialogue++), mta.getResponse());
+                    String.format(CONST_ZPAD, interaction++), mta.getResponse());
             output.println(mta.getResponse());
+            transcript.server(mta.getResponse());
         }
         catch (NullPointerException e)
         // MTA was null
@@ -173,8 +170,9 @@ public abstract class AbstractServer
                     // Process the input line
                     {
                         logger.debug(CONST_MSG_CLIENT_DIALOGUE, uniquer,
-                                String.format(CONST_ZPAD, dialogue++), line);
-                        mta.processLine(line);
+                                String.format(CONST_ZPAD, interaction++), line);
+                        mta.processInputLine(line);                        
+                        transcript.client(line);
                     }
                     catch (MTAException e)
                     {
@@ -187,16 +185,17 @@ public abstract class AbstractServer
                     {
                         // Print out the response
                         logger.debug(CONST_MSG_MTA_DIALOGUE, uniquer,
-                                String.format(CONST_ZPAD, dialogue++),
+                                String.format(CONST_ZPAD, interaction++),
                                 response);
                         output.println(response);
+                        transcript.server(response);
                     }
                 }
                 else
                 {
                     try
                     {
-                        Thread.sleep(250);
+                        Thread.sleep(250);  // TODO Timeouts
                     }
                     catch (InterruptedException e)
                     {
@@ -204,6 +203,11 @@ public abstract class AbstractServer
                     }
                 }
             }
+            /*
+             * The Server is likely to be using straight IO or Socket IO,
+             * so just deal with it in the abstract class to deal with most 
+             * cases we are going to hit.
+             */
             catch (SocketException e)
             {
                 logger.warn(CONST_ERR_IO_CLOSED);
@@ -216,7 +220,8 @@ public abstract class AbstractServer
             }
         } // while (!mta.isClosed())
 
-        close();
+        cleanup();
 
     } // public void serve(MTA mta)
 }
+

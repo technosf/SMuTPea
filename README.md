@@ -45,6 +45,8 @@ Having a MTA that requires no set up and _will not send email_ is useful for tes
 ### SMuTPea-Servers ###
 **Servers** provides abstract _servers_ that manage the MTA lifecycle. There are two abstract servers, one that manages the MTA lifecycle on standard _input/output_ streams, and one managing the MTA lifecycle on network _sockets_.
 There are also example server implementations that put a _Sink_ server on the command line (allowing the user to practice SMTP interactively themselves) and on TCP sockets.
+**Transcripts**
+Transcripts for each Client connection can be collated, formatted and output, to System.out, a File or via HTTP PUT, after the connection ends. Transcripts are configured via System parameters: _System.out_ requires the use of _-DtranscriptPlain_ with no value, and _JSON_ requires the use of _-DtranscriptJSON_ with a value of a _FILE_ or _HTTP_ URI.
 
 ### SMuTPea-All ###
 **All** is an assembly module that take SMuTPea and it dependencies and puts them in a single jar for distribution and execution.
@@ -75,9 +77,11 @@ The other example server is a socket-based sink server __SocketSinkServer__, whi
 
 
 ## History ##
-0.0.5 Updated to RFC5321 & RFC7504, implementation of a Dummy server. Cleaned up project structure, return code validation.
+* _0.0.6_		Added Transcriptions for each client connection. Trancsripts can be plain or JSON formated and output to System.out or, in JSON format, deposited accourdint to a File or HTTP URI.
 
-0.0.1-0.0.4 First cut at RFC2821, implementation of Refuse and Sink MTAs and servers 
+* _0.0.5_		Updated to RFC5321 & RFC7504, implementation of a Dummy server. Cleaned up project structure, return code validation.
+
+* _0.0.1-0.0.4_	First cut at RFC2821, implementation of Refuse and Sink MTAs and servers 
 
 
 ## License ##

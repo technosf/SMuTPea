@@ -216,3 +216,6 @@ pip-log.txt
 #Mr Developer
 .mr.developer.cfg
 /target
+smutpea.jar
+.gitignore
+ECSmapping.ods

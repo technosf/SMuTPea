@@ -60,6 +60,7 @@ public final class RefuseMTA
             throws MTAException
     {
         setResponse(ReplyCode._421);
+        close();    // Close connection after sending response
     }
 
 
@@ -73,6 +74,7 @@ public final class RefuseMTA
             throws MTAException
     {
         setResponse(ReplyCode._421);
+        close();    // Close connection after sending response
     }
 
 
@@ -84,9 +86,6 @@ public final class RefuseMTA
     @Override
     protected final void sendMessage(final String message)
     {
-        // Do nothing.
-
-        setResponse(ReplyCode._421);
     }
 
 

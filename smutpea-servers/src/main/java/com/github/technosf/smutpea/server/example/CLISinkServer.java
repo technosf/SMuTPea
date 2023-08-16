@@ -40,6 +40,7 @@ public class CLISinkServer extends AbstractServer
 	/*
 	 * Constants
 	 */
+    private static final String CONST_SERVER_NAME = "SMuTPea CLISinkServer";
 	private static final String CONST_MSG_MTA_OPEN = "MTA connection opened.";
 	private static final String CONST_MSG_MTA_CLOSE = "MTA connection closed";
 	private static final String CONST_ERR_MTA_ERR = "MTA cannot be instantiated";
@@ -90,7 +91,7 @@ public class CLISinkServer extends AbstractServer
 	 * @see com.github.technosf.smutpea.server.AbstractServer#close()
 	 */
 	@Override
-	protected void close()
+	public void cleanup()
 	{
 		try
 		{
@@ -120,8 +121,14 @@ public class CLISinkServer extends AbstractServer
 	 * @see com.github.technosf.smutpea.server.AbstractServer#newMTA()
 	 */
 	@Override
-	protected MTA getMTA()
+	public MTA getMTA()
 	{
 		return mta;
 	}
+
+
+    @Override
+    public String getServerId() {
+        return CONST_SERVER_NAME;
+    }
 }

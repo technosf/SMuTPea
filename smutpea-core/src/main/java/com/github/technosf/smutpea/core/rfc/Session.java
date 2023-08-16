@@ -35,7 +35,7 @@ import com.github.technosf.smutpea.core.rfc.Command.CommandLine;
  * @see http://tools.ietf.org/html/rfc2821#section-3
  * @author technosf
  * @since 0.0.1
- * @version 0.0.1
+ * @version 0.0.5
  */
 public final class Session
 {
@@ -151,6 +151,8 @@ public final class Session
     public final synchronized String process(final String line)
             throws SmtpLineException, MTAException
     {
+        if (SessionState.CLOSED == stateTable.getState()) throw new MTAException(ERR_SESSION_CLOSED);
+
         /*
          * Validate input
          */
@@ -185,6 +187,17 @@ public final class Session
         return response;
     }
 
+    /**
+     * Puts the Session into CLOSED state without alterior processing
+     * 
+     * @since 0.0.5
+     * @throws SessionStateException
+     */
+    public final void close() 
+    throws SessionStateException
+    {
+        stateTable.updateState(SessionState.CLOSED);
+    }
 
     /**
      * Process {@code MTA} input while the {@code Session} is in a
@@ -201,7 +214,10 @@ public final class Session
     private final String commandStateProcessor(final String line)
             throws MTAException
     {
+
         logger.debug(CONST_MSG_PROCESS_CMD, line);
+
+        if (SessionState.CLOSED == stateTable.getState()) throw new MTAException(ERR_SESSION_CLOSED);
 
         CommandLine commandLine = parseLine(line); // Parse out the command
 
@@ -301,6 +317,8 @@ public final class Session
             throws MTAException
     {
         logger.debug(CONST_MSG_PROCESS_DATA, line);
+
+        if (SessionState.CLOSED == stateTable.getState()) throw new MTAException(ERR_SESSION_CLOSED);
 
         if (!".".equals(line))
         /*

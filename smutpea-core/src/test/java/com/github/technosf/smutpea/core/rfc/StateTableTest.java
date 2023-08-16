@@ -52,7 +52,6 @@ public class StateTableTest
 		classUnderTest = new StateTable();
 	}
 
-
 	/**
 	 * @return
 	 */
@@ -81,7 +80,7 @@ public class StateTableTest
 	{
 		try
 		{
-			classUnderTest.updateState(null);
+			classUnderTest.updateState(null,false);
 			fail("Exception expected.");
 		}
 		catch (SessionStateException e)
@@ -112,7 +111,7 @@ public class StateTableTest
 	}, dataProvider = "states")
 	public void getState(SessionState state) throws SessionStateException
 	{
-		classUnderTest.updateState(state);
+		classUnderTest.updateState(state,false);
 		assertEquals(classUnderTest.getState(), state);
 	}
 
