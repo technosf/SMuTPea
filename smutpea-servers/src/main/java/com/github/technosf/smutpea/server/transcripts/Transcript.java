@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 technosf [https://github.com/technosf]
+ * Copyright 2023 technosf [https://github.com/technosf]
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -38,22 +38,26 @@ import org.slf4j.LoggerFactory;
  */
 public class Transcript 
 {
-
     private static final Logger logger = LoggerFactory
             .getLogger(Transcript.class);
 
     /**
      * 
      */
-    public record Entry(boolean isClientEntry, long offset, String line) {};
+    public record Entry( boolean isClient, long offset, String line) {};
 
     /**
-     * 
+     * {@code Decorator} decorates a transcript into a given format, for example JSON
+     * and puts it out to the approriate channel
      */
     public interface Decorator 
     {
+        // Use the Transcript logger for this subclass
         static final Logger logger = Transcript.logger; 
         
+        /**
+         * Destination
+         */
         enum Destination 
         {   
             INVALID
@@ -61,27 +65,41 @@ public class Transcript
         ,   HTTP
         ,   FILE;
 
+            /**
+             * Determine the Destination enum appropriate for the given destination string
+             * <p>
+             * Known values are 'system.out', or URIs for HTTP/S and FILEs.
+             * 
+             * @param destination
+             * @return Destination enum
+             */
             public static Destination determine(String destination) 
             {
-
+                destination = destination.strip();
                 if ("system.out".equals(destination.toLowerCase())) return OUT;
-                try {
-                   URI uri = new URI(destination);
-                    switch (uri.getScheme())
+                try 
+                {
+                    URI uri = new URI(destination);
+                    switch (uri.getScheme().toLowerCase())
                     {
                         case "file" : return FILE;
                         case "http" : return HTTP;                    
                         case "https" : return HTTP;
                     };
-                } catch (URISyntaxException e) {
-                    //
-                }
+
+                } 
+                catch (Exception e) {}
 
                 return INVALID;
             }
         };
 
-        public void flush(LinkedList<Entry> entries);
+        /**
+         * Format and flush data from an ordered list of {@code Entry} stanzas
+         * 
+         * @param stanzas stanzas of the dialogue 
+         */
+        public void flush(LinkedList<Entry> stanzas);
         
     };
 
@@ -101,16 +119,6 @@ public class Transcript
     private static final Clock clock = Clock.systemUTC();
 
 
-    // // Statics
-    // private static String hostname;
-    
-    // static {
-    //     try {
-    //         hostname = InetAddress.getLocalHost().getHostName();
-    //     } catch (UnknownHostException e) {
-    //         hostname = "Unknown";
-    //     }
-    // }
 
     // Timer offset
     private long startOffset = 0 - clock.millis();
@@ -142,10 +150,10 @@ public class Transcript
     {
         Decorator d = new NullDecorator();
 
-        // if (PROPS.containsKey(CONST_PLAIN_KEY))
-        // {
-        //     d = new PlainDecorator( this, PROPS.getProperty(CONST_PLAIN_KEY).strip());
-        // }
+        if (PROPS.containsKey(CONST_PLAIN_KEY))
+        {
+            d = new PlainDecorator( PROPS.getProperty(CONST_PLAIN_KEY).strip());
+        }
 
         if ( PROPS.containsKey(CONST_JSON_KEY) )
         {
@@ -158,6 +166,7 @@ public class Transcript
     }
 
     /**
+     * Initialize a Transcript with basic info
      * 
      * @param MtaName
      * @param agentId

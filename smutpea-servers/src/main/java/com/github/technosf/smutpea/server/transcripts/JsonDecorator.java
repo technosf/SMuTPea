@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 technosf [https://github.com/technosf]
+ * Copyright 2023 technosf [https://github.com/technosf]
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -13,19 +13,12 @@
 
 package com.github.technosf.smutpea.server.transcripts;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
+
 import java.time.Clock;
 import java.util.LinkedList;
 
+import com.github.cliftonlabs.json_simple.JsonArray;
 import com.github.cliftonlabs.json_simple.JsonObject;
-import com.github.technosf.smutpea.server.transcripts.Transcript.Decorator;
 import com.github.technosf.smutpea.server.transcripts.Transcript.Entry;
 
 /**
@@ -39,26 +32,22 @@ import com.github.technosf.smutpea.server.transcripts.Transcript.Entry;
 {    "@timestamp" : "the timestamp"
 ,    "agent.xyz"  : "agent details"
 ,    "transcript" :
-    {   "client" :
+    [
         {
-            {   "milli" : "millisecond"
-            ,   "input" : "input..."
-            }   
-        ,   {   "milli" : "millisecond"
-            ,   "input" : "input..."
-            }
-        }
-    ,   "server" : 
+            "who" : "Server"
+            "dialogue" : ["dialogue"]
+            "ended" : milli 
+        },     
         {
-            {   "milli" : "millisecond"
-            ,   "output": "output..."
-            }
-        }
-    ,   "client" :
+            "who" : "Client"
+            "dialogue" : ["dialogue", "dialogue"]
+            "ended" : milli 
+        },     
         {
-            {   "milli" : "millisecond"
-            ,   "input" : "input..."
-            }   
+            "who" : "Server"
+            "dialogue" : ["dialogue", "dialogue"]
+            "ended" : milli 
+        },
     }
 }
  * </code>    
@@ -68,14 +57,11 @@ import com.github.technosf.smutpea.server.transcripts.Transcript.Entry;
  * @version 0.0.6
  */
 public class JsonDecorator 
-implements Decorator 
+extends AbstractDecorator
 {
     /* 
      * Statics
      */
-
-    private static final String CONST_ERROR_FLUSH = "Exception flushing JSON Transcript";
-
     private static final String CONST_JSON_TIMESTAMP = "@timestamp";
     private static final String CONST_JSON_AGENT_TYPE = "agent.type";
     private static final String CONST_JSON_AGENT_VERSION = "agent.version";
@@ -83,9 +69,6 @@ implements Decorator
     private static final String CONST_JSON_AGENT_ID = "agent.id";
     private static final String CONST_JSON_AGENT_ID_EPHEMERAL = "agent.ephemeral_id";
 
-
-     // Reference UTC Clock for dialogue log timing 
-    private static final Clock clock = Clock.systemUTC();
 
         // Statics
     // private static String hostname;
@@ -106,8 +89,6 @@ implements Decorator
 
     //private final Transcript transcript;
     private final JsonObject json = new JsonObject();
-    private final Destination destination;
-    private final String location;
 
 
 
@@ -118,14 +99,10 @@ implements Decorator
      */
     JsonDecorator(String mtaName, String agentId, String ephemeralId, String location)
     {
-        this.location = location;
-        destination =  Destination.determine(location);
-
-
-       // this.transcript = transcript;
+        super(location);
 
         // Initialize JSON trnscript
-        json.put(CONST_JSON_TIMESTAMP,clock.instant());
+        json.put(CONST_JSON_TIMESTAMP,clock.instant().toString());
         json.put(CONST_JSON_AGENT_TYPE,"SMuTPea");
         json.put(CONST_JSON_AGENT_VERSION,"??");
         json.put(CONST_JSON_AGENT_NAME,mtaName);
@@ -134,58 +111,47 @@ implements Decorator
 
     } // JsonDecorator
 
-    @Override
-    public void flush(LinkedList<Entry> entries) 
-    {
-        try {
-            switch (destination)
-            {
-                case OUT :
-                    json.toJson(new PrintWriter(System.out, true));
-                    break;
-                case FILE :
-                    append();
-                    break;
-                case HTTP :
-                    post();
-                    break;
-                default:
-                    break;
-            };
-        } catch (Exception e) {
-            logger.info(CONST_ERROR_FLUSH, e);
-        }
-    } // flush
-
 
     /**
-     * Post to a HTTP URI
      * 
-     * @throws InterruptedException
-     * @throws IOException
-     * 
+     * @param stanzas
      */
-    private void post() throws IOException, InterruptedException 
+    void process(LinkedList<Entry> stanzas) 
     {
-        HttpClient client = HttpClient.newHttpClient();
-        HttpRequest request = HttpRequest.newBuilder()
-            .uri(URI.create(location))
-            .POST(HttpRequest.BodyPublishers.ofString(json.toJson()))
-            .build();
-            client.send(request, HttpResponse.BodyHandlers.discarding());
+        String source;
+        String lastSource = "unset";
+        JsonArray jsonStanzas = new JsonArray();
+        JsonArray  jsonDialogue = new JsonArray();
+        JsonObject lastJsonStanza = new JsonObject();    
+        jsonStanzas.add(lastJsonStanza);
+        long ended = -1;
+
+        json.put("transcript", jsonStanzas);
+
+        for ( Entry stanza : stanzas ) 
+        {
+            source = stanza.isClient() ? "Client" : "Server";
+
+            if ( !source.equals(lastSource) && ended > -1)
+            // Check that this isn't the first change in speaker 
+            {
+                lastJsonStanza.put("ended",ended);
+                lastJsonStanza = new JsonObject();  
+                jsonStanzas.add(lastJsonStanza);
+                jsonDialogue = new JsonArray();
+                lastJsonStanza.put("who",source);
+                lastJsonStanza.put("dialogue",jsonDialogue);
+            }        
+            jsonDialogue.add( stanza.line()); 
+            ended = stanza.offset();
+        }
+        lastJsonStanza.put("ended",ended);
     }
 
 
-    /**
-     * Append JSON to a file
-     * 
-     * @throws IOException
-     * 
-     */
-    private void append() throws IOException 
-    {
-        FileWriter file = new FileWriter(new File(URI.create(location)),true);
-        json.toJson(file);
+    @Override
+    String getDialogue() {
+        return json.toJson();
     }
 
 }

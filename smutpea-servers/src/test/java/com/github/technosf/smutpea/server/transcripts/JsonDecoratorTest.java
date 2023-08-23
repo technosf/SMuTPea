@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 technosf [https://github.com/technosf]
+ * Copyright 2023 technosf [https://github.com/technosf]
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -13,15 +13,29 @@
 
 package com.github.technosf.smutpea.server.transcripts;
 
-import com.github.technosf.smutpea.server.transcripts.Transcript;
+import java.io.IOException;
+import java.net.URISyntaxException;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNull;
-import static org.testng.Assert.assertTrue;
-
-import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
-public class TranscriptTest {
-    
+public class JsonDecoratorTest extends AbstractDecoratorTest {
+    @Override
+    long getDialogueSize() {
+        return 1278;
+    }
+
+    @Test
+    public void testFlush_Out() throws IOException {
+        super.testFlush_Out();
+    }
+
+    @Test
+    public void testFlush_File() throws IOException, URISyntaxException {
+        super.testFlush_File();
+    }
+
+    @Test
+    public void testFlush_Http() throws InterruptedException {
+        super.testFlush_Http();
+    }
 }
