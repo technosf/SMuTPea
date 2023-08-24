@@ -37,7 +37,7 @@ import com.github.technosf.smutpea.server.transcripts.Transcript;
  * 
  * @author technosf
  * @since 0.0.1
- * @version 0.0.5
+ * @version 0.0.6
  */
 public abstract class AbstractServer 
     implements Server
@@ -58,9 +58,13 @@ public abstract class AbstractServer
     private static final String CONST_ERR_IO_READ =
             "IO Error reading input line";
     private static final String CONST_ERR_MTA_PROCESSING =
-            "MTA error processing input line";
+            "MTA error processing input line: {}";
+    private static final String CONST_ERR_CLOSE =
+            "Error closing resources";
 
     private static final String CONST_ZPAD = "%04d";
+
+    private static final long CONST_WAIT_SLEEP = 250;
 
 
     //
@@ -113,112 +117,122 @@ public abstract class AbstractServer
         long uniquer = ProcessHandle.current().pid() 
                 + System.nanoTime();
 
-        // Initialize the MTA
-        MTA mta = getMTA();
-
-        // Initialize JSON transcript
-        Transcript transcript = Transcript.getTranscript(mta.getMTAName(),getServerId(),String.valueOf(uniquer));
-
-
-        // Start I/O
-        PrintStream output = new PrintStream(out);
-
-        try
-        // Flush detrius from the input stream at the last moment.
-        {
-            in.skip(in.available());
-        }
-        catch (IOException e)
-        {
-            // NOOP
-        }
-
-        BufferedReader input = new BufferedReader(new InputStreamReader(in));
-
-        try
-        {
-            /*
-             * Test the MTA, connect to it and present the initial response
-             */
-            requireNonNull(mta).connect();
-            logger.debug(CONST_MSG_MTA_DIALOGUE, uniquer,
-                    String.format(CONST_ZPAD, interaction++), mta.getResponse());
-            output.println(mta.getResponse());
-            transcript.server(mta.getResponse());
-        }
-        catch (NullPointerException e)
-        // MTA was null
-        {
-            logger.error(CONST_ERR_MTA_NULL);
-        }
-
-        String line = null;
-        String response = null;
-        //int readAttempts = 0;
-
-        while (!mta.isClosed()) //&& readAttempts++ < 10)
+        // Initialize and use the MTA, mta output and transcript 
+        
+        try (
+            MTA mta = getMTA();
+            Transcript transcript = Transcript.getTranscript(mta.getMTAName(),getServerId(),String.valueOf(uniquer));
+            PrintStream output = new PrintStream(out)
+        ) 
+        // try-with-resources
         {
             try
-            // Read a line of input
+            // Flush detrius from the input stream at the last moment.
             {
-                if (input.ready())
-                {
-                    //readAttempts = 0;
-                    line = input.readLine();
-
-                    try
-                    // Process the input line
-                    {
-                        logger.debug(CONST_MSG_CLIENT_DIALOGUE, uniquer,
-                                String.format(CONST_ZPAD, interaction++), line);
-                        mta.processInputLine(line);                        
-                        transcript.client(line);
-                    }
-                    catch (MTAException e)
-                    {
-                        logger.error(CONST_ERR_MTA_PROCESSING, e);
-                    }
-
-                    if ((response = mta.getResponse()) != null
-                            && !response.isEmpty())
-                    // There is output
-                    {
-                        // Print out the response
-                        logger.debug(CONST_MSG_MTA_DIALOGUE, uniquer,
-                                String.format(CONST_ZPAD, interaction++),
-                                response);
-                        output.println(response);
-                        transcript.server(response);
-                    }
-                }
-                else
-                {
-                    try
-                    {
-                        Thread.sleep(250);  // TODO Timeouts
-                    }
-                    catch (InterruptedException e)
-                    {
-                        // NOOP
-                    }
-                }
-            }
-            /*
-             * The Server is likely to be using straight IO or Socket IO,
-             * so just deal with it in the abstract class to deal with most 
-             * cases we are going to hit.
-             */
-            catch (SocketException e)
-            {
-                logger.warn(CONST_ERR_IO_CLOSED);
-                break;
+                in.skip(in.available());
             }
             catch (IOException e)
             {
-                logger.error(CONST_ERR_IO_READ, e);
-                break;
+                // NOOP
             }
-        } // while (!mta.isClosed())
+
+            try (BufferedReader input = new BufferedReader(new InputStreamReader(in)))
+            {
+                try
+                {
+                    /*
+                    * Test the MTA, connect to it and present the initial response
+                    */
+                    requireNonNull(mta).connect();
+                    logger.info(CONST_MSG_MTA_DIALOGUE, uniquer,
+                            String.format(CONST_ZPAD, interaction++), mta.getResponse());
+                    output.println(mta.getResponse());
+                    transcript.server(mta.getResponse());
+                }
+                catch (NullPointerException e)
+                // MTA was null
+                {
+                    logger.error(CONST_ERR_MTA_NULL);
+                }
+
+                String line = null;
+                String response = null;
+                //int readAttempts = 0;
+
+                while (!mta.isClosed()) //&& readAttempts++ < 10)
+                {
+                    try
+                    // Read a line of input
+                    {
+                        if (input.ready())
+                        {
+                            //readAttempts = 0;
+                            line = input.readLine();
+
+                            try
+                            // Process the input line
+                            {
+                                logger.info(CONST_MSG_CLIENT_DIALOGUE, uniquer,
+                                        String.format(CONST_ZPAD, interaction++), line);
+                                mta.processInputLine(line);                        
+                                transcript.client(line);
+                            }
+                            catch (MTAException e)
+                            {
+                                logger.info(CONST_ERR_MTA_PROCESSING, e.getMessage());
+                                transcript.client(line);
+                            }
+
+                            if ((response = mta.getResponse()) != null
+                                    && !response.isEmpty())
+                            // There is output
+                            {
+                                // Print out the response
+                                logger.info(CONST_MSG_MTA_DIALOGUE, uniquer,
+                                        String.format(CONST_ZPAD, interaction++),
+                                        response);
+                                output.println(response);
+                                transcript.server(response);
+                            }
+                        } //if (input.ready())
+                        else
+                        {
+                            try
+                            {
+                                Thread.sleep(CONST_WAIT_SLEEP);  // TODO Timeouts
+                            }
+                            catch (InterruptedException e)
+                            {
+                                // NOOP
+                            }
+                        } //if (! input.ready())
+                    } // Read a line of input
+                    /*
+                    * The Server is likely to be using straight IO or Socket IO,
+                    * so just deal with it in the abstract class to deal with most 
+                    * cases we are going to hit.
+                    */
+                    catch (SocketException e)
+                    {
+                        logger.warn(CONST_ERR_IO_CLOSED);
+                        break;
+                    }
+                    catch (IOException e)
+                    {
+                        logger.error(CONST_ERR_IO_READ, e);
+                        break;
+                    }
+                } // while (!mta.isClosed())
+            } // try-with-resources input
+            catch (IOException e)
+            {
+                logger.error(CONST_ERR_IO_READ, e);
+            } // try(input)
+        } // try-with-resources mta, output, transcript
+        catch( Exception e)
+        {
+            logger.error(CONST_ERR_CLOSE, e);
+        }
 
         cleanup();
 

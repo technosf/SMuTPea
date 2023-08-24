@@ -15,8 +15,8 @@ package com.github.technosf.smutpea.mta.impl;
 
 import com.github.technosf.smutpea.core.Buffer;
 import com.github.technosf.smutpea.core.exceptions.MTAException;
-import com.github.technosf.smutpea.core.rfc.ReplyCode;
 import com.github.technosf.smutpea.core.rfc.Command.CommandLine;
+import com.github.technosf.smutpea.core.rfc.ReplyCode;
 import com.github.technosf.smutpea.mta.AbstractMTA;
 
 /**
@@ -30,7 +30,7 @@ import com.github.technosf.smutpea.mta.AbstractMTA;
  * @version 0.0.5
  */
 public final class DummyMTA
-        extends AbstractMTA
+    extends AbstractMTA
 {
 
     /**

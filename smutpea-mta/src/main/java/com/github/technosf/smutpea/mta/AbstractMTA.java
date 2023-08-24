@@ -42,7 +42,8 @@ import com.github.technosf.smutpea.core.rfc.Command.CommandLine;
  * @since 0.0.1
  * @version 0.0.5
  */
-public abstract class AbstractMTA implements MTA
+public abstract class AbstractMTA 
+implements MTA
 {
     private static final Logger logger = LoggerFactory
             .getLogger(AbstractMTA.class);
@@ -392,7 +393,7 @@ public abstract class AbstractMTA implements MTA
      * 
      * Override as needed
      * 
-     * @see com.github.technosf.smutpea.core.MTA#close()
+     * @see java.lang.AutoCloseable#close()
      */
     @Override
     public void close()

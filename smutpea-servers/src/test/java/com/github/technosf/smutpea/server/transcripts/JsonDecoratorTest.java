@@ -18,7 +18,15 @@ import java.net.URISyntaxException;
 
 import org.testng.annotations.Test;
 
-public class JsonDecoratorTest extends AbstractDecoratorTest {
+import com.github.technosf.smutpea.server.transcripts.Transcript.Decorator;
+
+public class JsonDecoratorTest extends AbstractDecoratorTest 
+{
+    @Override
+    Decorator getClassUnderTest(String location) {
+        return new JsonDecorator("FlushTest", "anMTA", "99",location);
+    }
+
     @Override
     long getDialogueSize() {
         return 1278;

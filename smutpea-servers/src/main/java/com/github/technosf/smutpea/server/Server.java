@@ -24,7 +24,8 @@ import com.github.technosf.smutpea.core.MTA;
  * @since 0.0.5
  * @version 0.0.5
  */
-public interface Server {
+public interface Server 
+{
 
     /**
      * Provides unique identifying info on this server instance,

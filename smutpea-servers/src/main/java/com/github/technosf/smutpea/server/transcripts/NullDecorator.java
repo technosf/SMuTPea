@@ -26,8 +26,17 @@ import com.github.technosf.smutpea.server.transcripts.Transcript.Entry;
  * @version 0.0.6
  */
 public class NullDecorator 
-implements Decorator 
+    implements Decorator 
 {
     @Override
-    public void flush(LinkedList<Entry> entries) {}
+    public void flush(LinkedList<Entry> entries) 
+    {
+        logger.debug("Null decorator flush");
+    }
+
+
+    @Override
+    public String getName() {
+        return "Null";
+    }
 }

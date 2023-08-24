@@ -13,8 +13,8 @@
 
 package com.github.technosf.smutpea.server.transcripts;
 
+import java.io.IOException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.time.Clock;
 import java.util.LinkedList;
 import java.util.Properties;
@@ -23,13 +23,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Transcript
+ * {@code Transcript}
  * <p>
  * Capture transcripts of the server & client transactions.
  * Format and output the transaction, if needed, using a
- * {@code Decorator} set in a System property
+ * {@code Decorator} set in a System property.
  * <p>
- * Transcripts are stored in a 
+ * Transcripts are stored in a set of {@code Entry} objects.
  *  
  * 
  * @author technosf
@@ -37,6 +37,7 @@ import org.slf4j.LoggerFactory;
  * @version 0.0.6
  */
 public class Transcript 
+implements AutoCloseable
 {
     private static final Logger logger = LoggerFactory
             .getLogger(Transcript.class);
@@ -54,6 +55,8 @@ public class Transcript
     {
         // Use the Transcript logger for this subclass
         static final Logger logger = Transcript.logger; 
+
+        String getName();
         
         /**
          * Destination
@@ -86,9 +89,8 @@ public class Transcript
                         case "http" : return HTTP;                    
                         case "https" : return HTTP;
                     };
-
                 } 
-                catch (Exception e) {}
+                catch (Exception e) {}  // Anything that causes an exception is INVALID
 
                 return INVALID;
             }
@@ -104,21 +106,19 @@ public class Transcript
     };
 
     /*
-     * 
+     * Class proper
      */
-
-    //
+    private static final String CONST_DBG_TRANSCRIPT = "Initiating for {}:{}:{}:{}";
     private static final String CONST_JSON_KEY = "transcriptJSON";
     private static final String CONST_PLAIN_KEY = "transcriptPlain";
 
+    //
     private static final Properties PROPS = System.getProperties();
 
     /* 
      * Reference UTC Clock for dialogue log timing 
      */
     private static final Clock clock = Clock.systemUTC();
-
-
 
     // Timer offset
     private long startOffset = 0 - clock.millis();
@@ -179,6 +179,8 @@ public class Transcript
         this.agentId = agentId;
         this.ephemeralId = ephemeralId;
         this.decorator = decorator;
+
+        logger.debug(CONST_DBG_TRANSCRIPT, mtaName, agentId, ephemeralId, decorator.getName());
     }
 
 
@@ -205,10 +207,12 @@ public class Transcript
 
 
     /**
-     * Let the GC own sending the Trnscript to its final destination
+     * Send the Transcript to its final destination
      */
+
     @Override
-    protected void finalize() {
+    public void close() throws IOException 
+    {        
         decorator.flush(entries);
     }
 }

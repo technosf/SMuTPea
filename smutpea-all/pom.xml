@@ -50,13 +50,23 @@
 								<excludes>
 									<exclude>org.testng:testng</exclude>
 									<exclude>org.easymock:easymock</exclude>
+									<exclude>com.squareup.okhttp3:mockwebserver</exclude>
 								</excludes>
 								<includes>
 									<include>${project.groupId}</include>
 									<include>org.slf4j:slf4j-api</include>
 									<include>org.slf4j:slf4j-simple</include>
+									<include>com.github.cliftonlabs:json-simple</include>
 								</includes>
 							</artifactSet>
+							<filters>
+								<filter>
+									<artifact>org.example:*</artifact>
+									<excludes>
+										<exclude>META-INF/*.MF</exclude>
+									</excludes>
+								</filter>
+							</filters>
 						</configuration>
 					</execution>
 				</executions>

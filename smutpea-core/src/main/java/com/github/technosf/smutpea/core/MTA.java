@@ -14,8 +14,8 @@
 package com.github.technosf.smutpea.core;
 
 import com.github.technosf.smutpea.core.exceptions.MTAException;
-import com.github.technosf.smutpea.core.rfc.ReplyCode;
 import com.github.technosf.smutpea.core.rfc.Command.CommandLine;
+import com.github.technosf.smutpea.core.rfc.ReplyCode;
 
 /**
  * <em>Message Transfer Agent</em> per RFC5321 section 2.3.3
@@ -30,9 +30,10 @@ import com.github.technosf.smutpea.core.rfc.Command.CommandLine;
  * @see http://tools.ietf.org/html/rfc5321#section-2.3.3
  * @author technosf
  * @since 0.0.1
- * @version 0.0.5
+ * @version 0.0.6
  */
 public interface MTA
+    extends AutoCloseable
 {
 
    
@@ -123,13 +124,6 @@ public interface MTA
      */
     void send() throws MTAException;
 
-    
-    /**
-     * Close the connection channel
-     * 
-     * @since 0.0.5
-     */
-    void close();
 
 
     /*

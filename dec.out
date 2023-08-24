@@ -1,0 +1,44 @@
+Server@11220 local.cli.server SinkMTA v1.0.0
+Server@5529503 Bad sequence of commands 
+Client@22047quit
+Server@22047221 <domain> Service closing transmission channel 
+Server @ 10	:: 220 local.cli.server SinkMTA v1.0.0
+Server @ 4034	:: 503 Bad sequence of commands 
+Client @ 6038	:: sdfsdf
+Server @ 6038	:: 503 Bad sequence of commands 
+Client @ 8793	:: quit
+Server @ 8793	:: 221 <domain> Service closing transmission channel 
+Server @ 10	:: 220 local.cli.server SinkMTA v1.0.0
+Server @ 4775	:: 503 Bad sequence of commands 
+Client @ 11032	:: no ehlo??
+Server @ 11032	:: 503 Bad sequence of commands 
+Client @ 13786	:: quit
+Server @ 13787	:: 221 <domain> Service closing transmission channel 
+
+
+Server @ 10	:: 220 local.cli.server SinkMTA v1.0.0
+Client @ 2769	:: dsfsdf
+Server @ 2769	:: 503 Bad sequence of commands 
+Client @ 7275	:: bye
+Server @ 7276	:: 503 Bad sequence of commands 
+Client @ 9287	:: quit
+Server @ 9287	:: 221 <domain> Service closing transmission channel 
+
+
+Server @ 10	:: 220 local.cli.server SinkMTA v1.0.0
+Client @ 3270	:: first
+Server @ 3270	:: 503 Bad sequence of commands 
+Client @ 6023	:: second
+Server @ 6023	:: 503 Bad sequence of commands 
+Client @ 8778	:: quit
+Server @ 8778	:: 221 <domain> Service closing transmission channel 
+
+{"agent.type":"SMuTPea","@timestamp":"2023-08-24T21:03:24.006035683Z","transcript":[{"ended":10},{"dialogue":["first"],"ended":5268,"who":"Client"},{"dialogue":["503 Bad sequence of commands "],"ended":5268,"who":"Server"},{"dialogue":["second"],"ended":8522,"who":"Client"},{"dialogue":["503 Bad sequence of commands "],"ended":8523,"who":"Server"},{"dialogue":["quit"],"ended":10276,"who":"Client"},{"dialogue":["221 <domain> Service closing transmission channel "],"ended":10276,"who":"Server"}],"agent.id":"SMuTPea CLISinkServer","agent.ephemeral_id":"17533717692952","agent.version":"??","agent.name":"SinkMTA v1.0.0"}{"agent.type":"SMuTPea","@timestamp":"2023-08-24T21:04:19.610319287Z","transcript":[{"ended":11},{"dialogue":["503 Bad sequence of commands "],"ended":3021,"who":"Server"},{"dialogue":["secod"],"ended":7276,"who":"Client"},{"dialogue":["503 Bad sequence of commands "],"ended":7276,"who":"Server"},{"dialogue":["quit"],"ended":9529,"who":"Client"},{"dialogue":["221 <domain> Service closing transmission channel "],"ended":9530,"who":"Server"}],"agent.id":"SMuTPea CLISinkServer","agent.ephemeral_id":"17589322002391","agent.version":"??","agent.name":"SinkMTA v1.0.0"}
+Server @ 10	:: 220 local.cli.server SinkMTA v1.0.0
+Client @ 3518	:: EHLO
+Server @ 3519	:: 503 Bad sequence of commands 
+Client @ 6773	:: second
+Server @ 6773	:: 503 Bad sequence of commands 
+Client @ 8775	:: quit
+Server @ 8776	:: 221 <domain> Service closing transmission channel 
+

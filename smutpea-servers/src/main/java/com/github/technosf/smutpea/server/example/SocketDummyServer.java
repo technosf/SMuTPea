@@ -219,10 +219,4 @@ public final class SocketDummyServer
     }
 
 
-    //@Override
-    // public String getClientId() {
-    //     // TODO Auto-generated method stub
-    //     throw new UnsupportedOperationException("Unimplemented method 'getClientId'");
-    // }
-
 }

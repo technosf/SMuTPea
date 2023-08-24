@@ -18,12 +18,19 @@ import java.net.URISyntaxException;
 
 import org.testng.annotations.Test;
 
+import com.github.technosf.smutpea.server.transcripts.Transcript.Decorator;
+
 public class PlainDecoratorTest 
 extends AbstractDecoratorTest
 {
     @Override
+    Decorator getClassUnderTest(String location) {
+        return new PlainDecorator(location);
+    }
+
+    @Override
     long getDialogueSize() {
-        return 1278;
+        return 605;
     }
 
     @Test
@@ -40,4 +47,5 @@ extends AbstractDecoratorTest
     public void testFlush_Http() throws InterruptedException {
         super.testFlush_Http();
     }
+
 }

@@ -14,7 +14,6 @@
 package com.github.technosf.smutpea.server.transcripts;
 
 
-import java.time.Clock;
 import java.util.LinkedList;
 
 import com.github.cliftonlabs.json_simple.JsonArray;
@@ -70,18 +69,6 @@ extends AbstractDecorator
     private static final String CONST_JSON_AGENT_ID_EPHEMERAL = "agent.ephemeral_id";
 
 
-        // Statics
-    // private static String hostname;
-    
-    // static {
-    //     try {
-    //         hostname = InetAddress.getLocalHost().getHostName();
-    //     } catch (UnknownHostException e) {
-    //         hostname = "Unknown";
-    //     }
-    // }
-
-    
     /*
      * Working storage
      */
@@ -150,8 +137,14 @@ extends AbstractDecorator
 
 
     @Override
-    String getDialogue() {
+    String getDialogue() 
+    {
         return json.toJson();
     }
 
+    @Override
+    public String getName() 
+    {
+        return "JSON";
+    }
 }

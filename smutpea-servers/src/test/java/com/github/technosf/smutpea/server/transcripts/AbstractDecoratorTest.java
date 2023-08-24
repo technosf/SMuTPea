@@ -13,6 +13,10 @@
 
 package com.github.technosf.smutpea.server.transcripts;
 
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertTrue;
+
 import java.io.ByteArrayOutputStream;
 import java.io.FileDescriptor;
 import java.io.FileOutputStream;
@@ -27,8 +31,8 @@ import java.util.LinkedList;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
-import static org.testng.Assert.*;
 
+import com.github.technosf.smutpea.server.transcripts.Transcript.Decorator;
 import com.github.technosf.smutpea.server.transcripts.Transcript.Entry;
 
 import okhttp3.mockwebserver.MockResponse;
@@ -39,7 +43,7 @@ abstract class AbstractDecoratorTest
 {
     static final String TMP = System.getProperty("java.io.tmpdir");
 
-    JsonDecorator classUnderTest;
+    Decorator classUnderTest;
 
     LinkedList<Entry> entries = new LinkedList<Entry>();
 
@@ -92,6 +96,12 @@ abstract class AbstractDecoratorTest
         mockServer.shutdown();
     }
 
+    /**
+     * 
+     * @param location
+     * @return
+     */
+    abstract Decorator getClassUnderTest(String location);
 
     @Test
     public void testFlush_Out() throws IOException 
@@ -101,8 +111,9 @@ abstract class AbstractDecoratorTest
         PrintStream x = new PrintStream(y,true);
 
         System.setOut(x);
-        classUnderTest = new JsonDecorator("FlushTest", "anMTA", "99", "System.Out");
+        classUnderTest = getClassUnderTest("System.Out");
         classUnderTest.flush(entries);   
+        
         x.flush();
         assertEquals(y.size(), getDialogueSize(), "String length");
       
@@ -119,14 +130,14 @@ abstract class AbstractDecoratorTest
         assertFalse( Files.exists(path), "File should not exists");
       
         // new file
-        classUnderTest = new JsonDecorator("FlushTest", "anMTA", "99", tmpFileUri);
+        classUnderTest = getClassUnderTest(tmpFileUri);
         classUnderTest.flush(entries);   
          
         assertTrue( Files.exists(path), "File should exist"); 
         assertEquals( Files.size(path), getDialogueSize(), "File length"); 
 
         // append file
-        classUnderTest = new JsonDecorator("FlushTest", "anMTA", "99", tmpFileUri);
+        classUnderTest = getClassUnderTest(tmpFileUri);
         classUnderTest.flush(entries);   
 
         assertTrue( Files.exists(path), "File appended should exist"); 
@@ -141,7 +152,7 @@ abstract class AbstractDecoratorTest
         String tmpHttpUri = "http://localhost:"+ mockServerPort + "/JDTest";
         mockServer.enqueue(new MockResponse());
 
-        classUnderTest = new JsonDecorator("FlushTest", "anMTA", "99", tmpHttpUri);
+        classUnderTest = getClassUnderTest(tmpHttpUri);
         classUnderTest.flush(entries);     
         
         RecordedRequest request = mockServer.takeRequest();

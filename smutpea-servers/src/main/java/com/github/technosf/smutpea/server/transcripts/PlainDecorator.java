@@ -41,18 +41,28 @@ extends AbstractDecorator
     @Override
     void process(LinkedList<Entry> stanzas) 
     {
+        dialogue.append( CRLF );
         for ( Entry stanza : stanzas ) 
         {
-            dialogue.append( stanza.isClient() ? "Client@" : "Server@" );
+            dialogue.append( stanza.isClient() ? "Client @ " : "Server @ " );
             dialogue.append( stanza.offset() );
+            dialogue.append( "\t:: " );
             dialogue.append( stanza.line() );
             dialogue.append( CRLF );
-        }
+        }        
+        dialogue.append( CRLF );
     }
 
     
     @Override
     String getDialogue() {
+
         return dialogue.toString();
+    }
+
+
+    @Override
+    public String getName() {
+        return "Plain";
     }
 }
