@@ -66,20 +66,25 @@ It was the need to test email producing applications that sparked the creation o
 
 Included are a couple of example SMTP server implementation servers that utilize the _sink_ MTA. One server is the command line server,__CLISinkServer__, that opens up as a connection to the MTA. It can be executed thus:
 ```
-java -cp smutpea-all-0.0.5-SNAPSHOT.jar com.github.technosf.smutpea.server.example.CLISinkServer
+java -cp smutpea-all-0.0.6-SNAPSHOT.jar com.github.technosf.smutpea.server.example.CLISinkServer
+```
+
+And with a transcript output to transcript.out so the dialogue can be reviewed:
+```
+java -DtranscriptPlain=transcript.out -cp smutpea-all-0.0.6-SNAPSHOT.jar com.github.technosf.smutpea.server.example.CLISinkServer
 ```
 
 And with debgging on so the program flow can be examined:
 ```
-java -Dorg.slf4j.simpleLogger.defaultLogLevel=debug -cp smutpea-all-0.0.5-SNAPSHOT.jar com.github.technosf.smutpea.server.example.CLISinkServer
+java -DtranscriptPlain=transcript.out -Dorg.slf4j.simpleLogger.defaultLogLevel=debug -cp smutpea-all-0.0.6-SNAPSHOT.jar com.github.technosf.smutpea.server.example.CLISinkServer
 ```
 The other example server is a socket-based sink server __SocketSinkServer__, which runs on the standard SMTP port, 25.
 
 
 ## History ##
-* _0.0.6_		Added Transcriptions for each client connection. Trancsripts can be plain or JSON formated and output to System.out or, in JSON format, deposited accourdint to a File or HTTP URI.
+* _0.0.6_		Added Transcriptions for each client connection. Trancsripts can be plain or JSON formated and output to System.out or, in JSON format, deposited accourding to a File or HTTP URI.
 
-* _0.0.5_		Updated to RFC5321 & RFC7504, implementation of a Dummy server. Cleaned up project structure, return code validation.
+* _0.0.5_		Updated to RFC5321 & RFC7504, implementation of a Dummy server. Cleaned up project structure, return code validation. Updated to JAVA 17.
 
 * _0.0.1-0.0.4_	First cut at RFC2821, implementation of Refuse and Sink MTAs and servers 
 
