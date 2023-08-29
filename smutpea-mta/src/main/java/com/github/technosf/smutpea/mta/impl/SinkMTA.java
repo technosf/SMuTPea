@@ -142,6 +142,8 @@ public final class SinkMTA
                     break;
                 case EHLO:
                 case HELO:
+                    replyCode = commandLine.getParams().length > 0 ? ReplyCode._503 : ReplyCode._501;
+                    break;
                 case MAIL:
                 case RCPT:
                 case DATA:

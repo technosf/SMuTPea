@@ -117,8 +117,7 @@ public abstract class AbstractServer
         long uniquer = ProcessHandle.current().pid() 
                 + System.nanoTime();
 
-        // Initialize and use the MTA, mta output and transcript 
-        
+        // Initialize and use the MTA, mta output and transcript         
         try (
             MTA mta = getMTA();
             Transcript transcript = Transcript.getTranscript(mta.getMTAName(),getServerId(),String.valueOf(uniquer));
@@ -155,57 +154,15 @@ public abstract class AbstractServer
                     logger.error(CONST_ERR_MTA_NULL);
                 }
 
-                String line = null;
-                String response = null;
-                //int readAttempts = 0;
+                // String line = null;
+                // String response = null;
 
-                while (!mta.isClosed()) //&& readAttempts++ < 10)
+                while (!mta.isClosed()) 
                 {
                     try
-                    // Read a line of input
+                    // Read and respond to a line of input
                     {
-                        if (input.ready())
-                        {
-                            //readAttempts = 0;
-                            line = input.readLine();
-
-                            try
-                            // Process the input line
-                            {
-                                logger.info(CONST_MSG_CLIENT_DIALOGUE, uniquer,
-                                        String.format(CONST_ZPAD, interaction++), line);
-                                mta.processInputLine(line);                        
-                                transcript.client(line);
-                            }
-                            catch (MTAException e)
-                            {
-                                logger.info(CONST_ERR_MTA_PROCESSING, e.getMessage());
-                                transcript.client(line);
-                            }
-
-                            if ((response = mta.getResponse()) != null
-                                    && !response.isEmpty())
-                            // There is output
-                            {
-                                // Print out the response
-                                logger.info(CONST_MSG_MTA_DIALOGUE, uniquer,
-                                        String.format(CONST_ZPAD, interaction++),
-                                        response);
-                                output.println(response);
-                                transcript.server(response);
-                            }
-                        } //if (input.ready())
-                        else
-                        {
-                            try
-                            {
-                                Thread.sleep(CONST_WAIT_SLEEP);  // TODO Timeouts
-                            }
-                            catch (InterruptedException e)
-                            {
-                                // NOOP
-                            }
-                        } //if (! input.ready())
+                        interaction = processStanza(interaction, uniquer, mta, transcript, output, input);
                     } // Read a line of input
                     /*
                     * The Server is likely to be using straight IO or Socket IO,
@@ -237,5 +194,99 @@ public abstract class AbstractServer
         cleanup();
 
     } // public void serve(MTA mta)
+
+
+    /**
+     * Process a stanza of Client-Server communication 
+     * <p>
+     * Broken out from {@code open} for readability
+     * 
+     * @param interaction the interaction number
+     * @param uniquer the uniquer
+     * @param mta the MTA
+     * @param transcript the transscript
+     * @param output the output stream
+     * @param input the input stream
+     * @return the new interaction #
+     * @throws IOException 
+     */
+    private int processStanza(int interaction, long uniquer, MTA mta, Transcript transcript, PrintStream output,
+            BufferedReader input) 
+        throws Exception 
+    {
+        String line;
+        String response;
+
+        if (input.ready())
+        // There was input from the client
+        {
+            mta.resetClientIdle();      // reset the idle
+            line = input.readLine();
+
+            try
+            // Process the input line
+            {
+                logger.info(CONST_MSG_CLIENT_DIALOGUE, uniquer,
+                        String.format(CONST_ZPAD, interaction++), line);
+                mta.processInputLine(line);                        
+                transcript.client(line);
+            }
+            catch (MTAException e)
+            {
+                logger.info(CONST_ERR_MTA_PROCESSING, e.getMessage());
+                transcript.client(line);
+            }
+
+            if ((response = mta.getResponse()) != null
+                    && !response.isEmpty())
+            // There is output
+            {
+                // Print out the response
+                logger.info(CONST_MSG_MTA_DIALOGUE, uniquer,
+                        String.format(CONST_ZPAD, interaction++),
+                        response);
+                output.println(response);
+                transcript.server(response);
+            }
+
+            return interaction;
+
+        } //if (input.ready())
+
+        /*
+         * Input was not ready, so sleep for a while and check for timeouts
+         */
+        try
+        {
+            Thread.sleep(CONST_WAIT_SLEEP);  
+
+            if (
+                    mta.updateClientIdle(CONST_WAIT_SLEEP)
+                && (response = mta.getResponse()) != null
+                && !response.isEmpty()
+                )
+            /* 
+             * There was a timeout while sleeping that generated a response. 
+             * Log output to client and transcript
+            */
+            {
+                logger.info(CONST_MSG_MTA_DIALOGUE, uniquer,
+                        String.format(CONST_ZPAD, interaction++),
+                        response);
+
+                output.println(response);
+
+                transcript.server(response);
+
+            } // if
+        } // try
+        catch (InterruptedException e)
+        {
+            // NOOP
+        }
+
+        return interaction;
+
+    } //private int session
 }
 

@@ -40,7 +40,7 @@ import com.github.technosf.smutpea.core.rfc.Command.CommandLine;
  * 
  * @author technosf
  * @since 0.0.1
- * @version 0.0.5
+ * @version 0.0.6
  */
 public abstract class AbstractMTA 
 implements MTA
@@ -51,12 +51,16 @@ implements MTA
     /*
      * Constants
      */
+    private static final String CONST_ERR_TIMEOUT = "Error: timeout exceeded";
+
     private static final String CONST_MSG_PROCESS = "Client:[{}]";
     private static final String CONST_MSG_NO_CMD = "No command found";
     private static final String CONST_MSG_INVLD_SESS_STATE =
             "Invalid session state:[{}] for command:[{}s]";
     private static final String CONST_MSG_UNKNOWN_ERR =
             "Propagating unknown error:[{}]";
+    private static final String CONST_MSG_CLOSE_ERR =
+            "Exception closing session";
 
     /**
      * Command response format - code, message, extra
@@ -86,7 +90,14 @@ implements MTA
     /**
      * The current/last Reply Code
      */
-    private ReplyCode replyCode;// = ReplyCode._220;
+    private ReplyCode replyCode;
+
+
+    /**
+     * The approximate time the MTA has been idle
+     * waiting for Client input
+     */
+    protected long clientIdleTimeMillis;
 
 
     /**
@@ -155,6 +166,7 @@ implements MTA
     protected abstract void sendMessage(final String message);
 
 
+
     /*
      * ------------------------------------------------------------------------
      * 
@@ -162,6 +174,31 @@ implements MTA
      * 
      * ------------------------------------------------------------------------
      */
+
+    /**
+     * Check the client idle time against timeouts for the current State
+     * <p>
+     * Override as needed
+     * 
+     * @param milliseconds the amount of idle time in milliseconds
+     * @return true if the client timed out
+     */
+    protected boolean checkClientTimeout(long milliseconds)
+    {
+        if  (
+                ( milliseconds < TIMEOUT_SERVER*1000 ) 
+            &&
+                (       ( SessionState.DATA != session.getStateTable().getState() ) 
+                    ||  ( milliseconds < TIMEOUT_DATABLOCK*1000 )
+                )
+            ) return false;
+        
+        setResponse(ReplyCode._421, "421 " + CONST_ERR_TIMEOUT);
+        close();
+
+        return true;
+    }
+
 
     /**
      * Sets the MTA response description
@@ -205,7 +242,7 @@ implements MTA
     /*
      * ------------------------------------------------------------------------
      * 
-     * Final MTA methods
+     * MTA methods
      * 
      * ------------------------------------------------------------------------
      */
@@ -332,6 +369,28 @@ implements MTA
     /**
      * {@inheritDoc}
      * 
+     * @see com.github.technosf.smutpea.core.MTA#resetClientIdle()
+     */
+    public final void resetClientIdle()
+    {
+        clientIdleTimeMillis = 0;
+    }
+
+    
+    /**
+     * {@inheritDoc}
+     * 
+     * @see com.github.technosf.smutpea.core.MTA#updateClientIdle()
+     */
+    public final boolean updateClientIdle(long milliseconds)
+    {
+        return checkClientTimeout(clientIdleTimeMillis += milliseconds);
+    }
+
+
+    /**
+     * {@inheritDoc}
+     * 
      * @see com.github.technosf.smutpea.core.MTA#getMTADomain()
      */
     @Override
@@ -388,6 +447,7 @@ implements MTA
         return replyCode;
     }
 
+    
     /**
      * {@inheritDoc}
      * 
@@ -398,5 +458,13 @@ implements MTA
     @Override
     public void close()
     {
+        try 
+        {
+            session.close();
+        }
+        catch (SessionStateException e)
+        {
+            logger.debug(CONST_MSG_CLOSE_ERR, e.getMessage());
+        }
     }
 }

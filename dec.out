@@ -41,4 +41,40 @@ Client @ 6773	:: second
 Server @ 6773	:: 503 Bad sequence of commands 
 Client @ 8775	:: quit
 Server @ 8776	:: 221 <domain> Service closing transmission channel 
+---------------------------
+
+
+
+Server @ 11	:: 220 local.cli.server SinkMTA v1.0.0
+Client @ 4270	:: ehlo
+Server @ 4270	:: 503 Bad sequence of commands 
+Server @ 64334	:: 421 Error: timeout exceeded
+
+
+Server @ 10	:: 220 local.cli.server SinkMTA v1.0.0
+Client @ 3770	:: EHLO
+Server @ 3770	:: 501 Syntax error in parameters or arguments 
+Client @ 32049	:: EHLO sdas
+Server @ 32049	:: 250 Requested mail action okay, completed 
+Client @ 35319	:: EHLO
+Server @ 35319	:: 501 Syntax error in parameters or arguments 
+Client @ 48083	:: EHLO sdfsdf
+Server @ 48084	:: 501 Syntax error in parameters or arguments 
+Server @ 108139	:: 421 Error: timeout exceeded
+
+
+Server @ 11	:: 220 local.cli.server SinkMTA v1.0.0
+Client @ 3521	:: EHLO
+Server @ 3521	:: 501 Syntax error in parameters or arguments 
+Client @ 7025	:: EHLO ddad
+Server @ 7025	:: 250 Requested mail action okay, completed 
+Client @ 9790	:: EHLO
+Server @ 9790	:: 501 Syntax error in parameters or arguments 
+Client @ 17299	:: [A[A
+Server @ 17299	:: 503 Bad sequence of commands 
+Client @ 20053	:: EHLO fsdfs
+Server @ 20053	:: 503 Bad sequence of commands 
+Client @ 22806	:: exit
+Server @ 22806	:: 503 Bad sequence of commands 
+Server @ 82864	:: 421 Error: timeout exceeded
 

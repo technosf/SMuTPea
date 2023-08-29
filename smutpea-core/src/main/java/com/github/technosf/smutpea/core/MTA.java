@@ -54,13 +54,14 @@ public interface MTA
     static int MAX_SIZE_COMMAND_LINE = 512;    // 4.5.3.1.4.  Command Line
     static int MAX_SIZE_REPLY_LINE = 512;    // 4.5.3.1.5.  Reply Line
     static int MAX_SIZE_TEXT_LINE = 1000;    // 4.5.3.1.6.  Text Line
-    static int TIMEOUT_220 = 5*60;    // 4.5.3.2.1.  Initial 220 Message: 5 Minutes
-    static int TIMEOUT_MAIL = 5*60;    // 4.5.3.2.2.  MAIL Command: 5 Minutes
-    static int TIMEOUT_RCPT = 5*60;    // 4.5.3.2.3.  RCPT Command: 5 Minutes
-    static int TIMEOUT_DATA = 2*60;    // 4.5.3.2.4.  DATA Initiation: 2 Minutes
-    static int TIMEOUT_DATABLOCK = 3*60;    // 4.5.3.2.5.  Data Block: 3 Minutes
-    static int TIMEOUT_DATATERM = 10*60;    // 4.5.3.2.6.  DATA Termination: 10 Minutes.
-    static int TIMEOUT_SERVER = 5*60;    // 4.5.3.2.7.  Server Timeout: 5 Minutes.
+    
+    static int TIMEOUT_220 = 5*60;    // 4.5.3.2.1.  Initial 220 Message (Server timesout): 5 Minutes
+    static int TIMEOUT_MAIL = 5*60;    // 4.5.3.2.2.  MAIL Command (Server timesout): 5 Minutes
+    static int TIMEOUT_RCPT = 5*60;    // 4.5.3.2.3.  RCPT Command (Server timesout): 5 Minutes
+    static int TIMEOUT_DATA = 2*60;    // 4.5.3.2.4.  DATA Initiation (Server timesout): 2 Minutes
+    static int TIMEOUT_DATABLOCK = 3*60;    // 4.5.3.2.5.  Data Block (Client timesout): 3 Minutes
+    static int TIMEOUT_DATATERM = 10*60;    // 4.5.3.2.6.  DATA Termination (Server timesout): 10 Minutes.
+    static int TIMEOUT_SERVER = 5*60;    // 4.5.3.2.7.  Server Timeout (Client timesout): 5 Minutes.
 
 
     /*
@@ -123,6 +124,23 @@ public interface MTA
      *             The MTA implementation experienced an exception.
      */
     void send() throws MTAException;
+
+
+    /**
+     * Resets the Client idle timer
+     */
+    void resetClientIdle();
+    
+
+    /**
+     * Updates the time the MTA has been idle waiting for Client input.
+     * <p>
+     * Used to calculate timeouts and do subsequent processing
+     * 
+     * @param milliseconds number of milliseconds waited for input
+     * @return true is timeout
+     */
+    boolean updateClientIdle(long milliseconds);
 
 
 
@@ -204,4 +222,5 @@ public interface MTA
      * @return the Buffer
      */
     Buffer getBuffer();
+
 }
