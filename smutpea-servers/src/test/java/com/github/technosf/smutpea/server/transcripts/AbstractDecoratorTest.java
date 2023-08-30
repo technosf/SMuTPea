@@ -130,21 +130,21 @@ abstract class AbstractDecoratorTest
     @Test
     public void testFlush_File() throws IOException, URISyntaxException 
     {
-        String tmpFileUri = "File://"+ TMP + FILEBASE + System.currentTimeMillis() + ".tmp";
-         
-        Path path = Path.of(new URI(tmpFileUri));
+        File tmpFile = new File(TMP + FILEBASE + System.currentTimeMillis() + ".tmp");
+        URI tmpFileUri = tmpFile.toURI();         
+        Path path = tmpFile.toPath();
  
         assertFalse( Files.exists(path), "File should not exists");
       
         // new file
-        classUnderTest = getClassUnderTest(tmpFileUri);
+        classUnderTest = getClassUnderTest(tmpFileUri.toString());
         classUnderTest.flush(entries);   
          
         assertTrue( Files.exists(path), "File should exist"); 
         assertEquals( Files.size(path), getDialogueSize(), "File length"); 
 
         // append file
-        classUnderTest = getClassUnderTest(tmpFileUri);
+        classUnderTest = getClassUnderTest(tmpFileUri.toString());
         classUnderTest.flush(entries);   
 
         assertTrue( Files.exists(path), "File appended should exist"); 
