@@ -42,8 +42,13 @@ import okhttp3.mockwebserver.RecordedRequest;
 
 abstract class AbstractDecoratorTest 
 {
-    static final String TMP = System.getProperty("java.io.tmpdir");
+    static String TMP;
     static final String FILEBASE = File.separator + "JDTest";
+
+    {
+        TMP = System.getProperty("java.io.tmpdir");
+        if ( TMP.endsWith(File.separator) ) TMP = TMP.substring(0, TMP.length() - 1);
+    }
 
     Decorator classUnderTest;
 
