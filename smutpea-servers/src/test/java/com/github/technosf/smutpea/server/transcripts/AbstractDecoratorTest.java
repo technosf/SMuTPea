@@ -18,6 +18,7 @@ import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileDescriptor;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -42,6 +43,7 @@ import okhttp3.mockwebserver.RecordedRequest;
 abstract class AbstractDecoratorTest 
 {
     static final String TMP = System.getProperty("java.io.tmpdir");
+    static final String FILEBASE = File.separator + "JDTest";
 
     Decorator classUnderTest;
 
@@ -123,7 +125,7 @@ abstract class AbstractDecoratorTest
     @Test
     public void testFlush_File() throws IOException, URISyntaxException 
     {
-        String tmpFileUri = "File://"+ TMP + "/JDTest" + System.currentTimeMillis() + ".tmp";
+        String tmpFileUri = "File://"+ TMP + FILEBASE + System.currentTimeMillis() + ".tmp";
          
         Path path = Path.of(new URI(tmpFileUri));
  
@@ -157,7 +159,7 @@ abstract class AbstractDecoratorTest
         
         RecordedRequest request = mockServer.takeRequest();
 
-        assertEquals("/JDTest", request.getPath(), "Path");
+        assertEquals( request.getPath(), FILEBASE, "Path");
         assertEquals( request.getMethod(), "POST", "Method");
         assertEquals( request.getBodySize(), getDialogueSize(), "Body Size");
     }
