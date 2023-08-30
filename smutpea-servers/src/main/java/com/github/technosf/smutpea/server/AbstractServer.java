@@ -58,7 +58,7 @@ public abstract class AbstractServer
     private static final String CONST_ERR_IO_READ =
             "IO Error reading input line";
     private static final String CONST_ERR_MTA_PROCESSING =
-            "MTA error processing input line: {}";
+            "MTA error processing input line: {}  MTA:[{}]";
     private static final String CONST_ERR_CLOSE =
             "Error closing resources";
 
@@ -233,7 +233,7 @@ public abstract class AbstractServer
             }
             catch (MTAException e)
             {
-                logger.info(CONST_ERR_MTA_PROCESSING, e.getMessage());
+                logger.info(CONST_ERR_MTA_PROCESSING, line, e.getMessage());
                 transcript.client(line);
             }
 
