@@ -150,7 +150,7 @@ abstract class AbstractDecoratorTest
         assertTrue( Files.exists(path), "File appended should exist"); 
         assertEquals( Files.size(path), 2*getDialogueSize(), "File append length"); 
 
-        Files.delete(path);     // remove temp file
+        // Files.delete(path);     // Let OS process delete temp file
     }
 
     @Test
@@ -164,7 +164,7 @@ abstract class AbstractDecoratorTest
         
         RecordedRequest request = mockServer.takeRequest();
 
-        assertEquals( request.getPath(), FILEBASE, "Path");
+        assertEquals( request.getPath(), "/JDTest", "Path");
         assertEquals( request.getMethod(), "POST", "Method");
         assertEquals( request.getBodySize(), getDialogueSize(), "Body Size");
     }
