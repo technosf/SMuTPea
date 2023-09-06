@@ -96,7 +96,7 @@ Licensed under Apache 2.0</description>
         <dependency>
             <groupId>org.easymock</groupId>
             <artifactId>easymock</artifactId>
-            <version>5.1.0</version>
+            <version>5.2.0</version>
             <scope>test</scope>
         </dependency>
         <!-- https://mvnrepository.com/artifact/com.squareup.okhttp3/mockwebserver -->
